@@ -1,6 +1,11 @@
 package tech.igrant.jizhang.main.detail
 
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,12 +17,16 @@ import androidx.appcompat.app.AppCompatActivity
 import tech.igrant.jizhang.R
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
 import tech.igrant.jizhang.databinding.ItemSelectBinding
+import tech.igrant.jizhang.framework.ext.toDate
 import tech.igrant.jizhang.framework.ext.toLocalDate
 import tech.igrant.jizhang.login.TokenManager
 import tech.igrant.jizhang.main.account.AccountService
 import tech.igrant.jizhang.main.subject.SubjectService
 import tech.igrant.jizhang.main.subject.SubjectService.SubjectVo
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CreateDetailActivity : AppCompatActivity() {
 
@@ -71,11 +80,30 @@ class CreateDetailActivity : AppCompatActivity() {
                         getOnItemSelectedListener { id -> detailTo.destAccountId = id }
                 }
             }
-        binding.createDetailDateInput.text =
-            detailTo.createdAt.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        bindDate()
+        binding.createDetailDateInput.setOnClickListener {
+            detailTo.createdAt.toLocalDate().apply {
+                DatePickerDialog(
+                    this@CreateDetailActivity,
+                    DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                        detailTo.createdAt =
+                            LocalDateTime.of(year, month + 1, day, 0, 0, 1).toDate()
+                        bindDate()
+                    },
+                    this.year,
+                    this.monthValue - 1,
+                    this.dayOfMonth
+                ).show()
+            }
+        }
         binding.createDetailSaveButton.setOnClickListener {
             Log.i("create", detailTo.toString())
         }
+    }
+
+    private fun bindDate() {
+        binding.createDetailDateInput.text =
+            detailTo.createdAt.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
 
     private fun getOnItemSelectedListener(after: (id: Long) -> Unit): AdapterView.OnItemSelectedListener {
