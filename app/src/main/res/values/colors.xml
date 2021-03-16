@@ -8,4 +8,15 @@
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
+
+
+    <color name="amount_in">#02b791</color>
+    <color name="amount_out">#f18796</color>
+    <color name="text_subject">#0f0f0e</color>
+    <color name="text_card">#8b8e9a</color>
+    <color name="bg_1">#ffebe5</color>
+    <color name="bg_2">#fdf1db</color>
+    <color name="bg_3">#d0ecff</color>
+    <color name="nav_high_light">#135bff</color>
+    <color name="nav_normal">#000000</color>
 </resources>

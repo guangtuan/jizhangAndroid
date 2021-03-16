@@ -1,38 +1,42 @@
 package tech.igrant.jizhang.main.detail
 
-import android.app.AlertDialog
+import android.app.Activity
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import tech.igrant.jizhang.R
+import androidx.fragment.app.Fragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
 import tech.igrant.jizhang.databinding.ItemSelectBinding
+import tech.igrant.jizhang.framework.RetrofitFacade
 import tech.igrant.jizhang.framework.ext.toDate
 import tech.igrant.jizhang.framework.ext.toLocalDate
 import tech.igrant.jizhang.login.TokenManager
 import tech.igrant.jizhang.main.account.AccountService
 import tech.igrant.jizhang.main.subject.SubjectService
-import tech.igrant.jizhang.main.subject.SubjectService.SubjectVo
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class CreateDetailActivity : AppCompatActivity() {
 
     companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, CreateDetailActivity::class.java))
+        val REQUEST_CODE = 1
+
+        fun startForResult(fragment: Fragment) {
+            fragment.startActivityForResult(
+                Intent(fragment.requireContext(), CreateDetailActivity::class.java),
+                REQUEST_CODE
+            )
         }
     }
 
@@ -97,7 +101,17 @@ class CreateDetailActivity : AppCompatActivity() {
             }
         }
         binding.createDetailSaveButton.setOnClickListener {
+            detailTo.amount = binding.createDetailAmountInput.text.toString().toInt() * 100
+            detailTo.remark = binding.createDetailRemarkInput.text.toString()
             Log.i("create", detailTo.toString())
+            RetrofitFacade.get().create(DetailService::class.java).create(detailTo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Toast.makeText(this, "create success", Toast.LENGTH_LONG).show()
+                    this.setResult(Activity.RESULT_OK)
+                    this.finish()
+                }
         }
     }
 

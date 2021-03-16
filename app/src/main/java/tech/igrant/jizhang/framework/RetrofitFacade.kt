@@ -81,6 +81,7 @@ class RetrofitFacade private constructor() {
         fun init(appDataSource: TokenManager.AppDataSource) {
             val gsonConverterFactory = GsonConverterFactory.create(
                 GsonBuilder()
+                    .setDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
                     .registerTypeAdapter(
                         LocalDateTime::class.java,
                         object : JsonDeserializer<LocalDateTime> {

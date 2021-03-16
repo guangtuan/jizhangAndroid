@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import tech.igrant.jizhang.framework.PageQuery
 import tech.igrant.jizhang.framework.PageResult
+import tech.igrant.jizhang.framework.ext.toDate
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -19,8 +20,8 @@ interface DetailService {
 
     data class DetailQuery(
         val subjectIds: List<Long>?,
-        val start: LocalDate?,
-        val end: LocalDate?,
+        val start: Date,
+        val end: Date,
         val sourceAccountId: Long?,
         val destAccountId: Long?
     ) {
@@ -28,8 +29,8 @@ interface DetailService {
             fun first(): DetailQuery {
                 return DetailQuery(
                     subjectIds = arrayListOf(),
-                    start = LocalDate.now().minusMonths(1),
-                    end = LocalDate.now(),
+                    start = LocalDate.now().minusMonths(1).atTime(0, 0, 0).toDate(),
+                    end = LocalDate.now().atTime(23, 59, 59).toDate(),
                     sourceAccountId = null,
                     destAccountId = null
                 )

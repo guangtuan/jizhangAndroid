@@ -8,10 +8,10 @@
         android:id="@+id/detail_list_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
+        android:background="@android:color/white"
         android:padding="8dp"
         android:text="@string/demo_date"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/title" />
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/detail_date" />
 
 </LinearLayout>
