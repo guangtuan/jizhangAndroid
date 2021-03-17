@@ -4,8 +4,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.http.GET
+import tech.igrant.jizhang.framework.LocalStorage
 import tech.igrant.jizhang.framework.RetrofitFacade
+import tech.igrant.jizhang.state.EnvManager
 import java.util.*
+import java.util.function.Function
 
 interface AccountService {
 
@@ -25,15 +28,27 @@ interface AccountService {
     )
 
     companion object {
+
+        private const val DB = "accounts"
+
         private var memoryCache: MutableList<AccountVo> = mutableListOf()
 
         fun loadAccount(): Observable<List<AccountVo>> {
-            return if (memoryCache.isNotEmpty()) {
+            if (EnvManager.offline()) {
+                return Observable.just(LocalStorage.instance().batchGet(DB, AccountVo::class.java))
+            }
+            if (memoryCache.isNotEmpty()) {
                 Observable.just(memoryCache.toList()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-            } else RetrofitFacade.get().create(AccountService::class.java)
+            }
+            return RetrofitFacade.get().create(AccountService::class.java)
                 .list()
-                .doOnNext { memoryCache.clear(); memoryCache.addAll(it) }
+                .doOnNext {
+                    memoryCache.clear()
+                    memoryCache.addAll(it)
+                    LocalStorage.instance().batchClear(DB)
+                    LocalStorage.instance().batchSave(DB, { "$(account.id)" }, it)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
         }

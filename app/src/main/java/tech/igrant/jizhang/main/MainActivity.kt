@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import tech.igrant.jizhang.R
+import tech.igrant.jizhang.state.EnvManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,5 +35,10 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        if (EnvManager.offline()) {
+            supportActionBar?.setTitle(R.string.offline_mode_tips)
+            actionBar?.setTitle(R.string.offline_mode_tips)
+        }
     }
 }

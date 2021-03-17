@@ -10,9 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import tech.igrant.jizhang.R
+import tech.igrant.jizhang.databinding.FragmentSubjectBinding
 import tech.igrant.jizhang.framework.ext.inflate
+import tech.igrant.jizhang.state.EnvManager
 
 class SubjectFragment : Fragment() {
+
+    private lateinit var binding: FragmentSubjectBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,16 +24,23 @@ class SubjectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_subject, container, false)
-        val subjects = root.findViewById<RecyclerView>(R.id.subjects)
+        binding = FragmentSubjectBinding.bind(root)
+        loadData()
+        return root
+    }
+
+    private fun loadData() {
+        if (EnvManager.offline()) {
+            return
+        }
         SubjectService.loadSubject()
             .map {
                 it.flatMap { l -> mutableListOf(l).also { single -> single.addAll(l.children) } }
             }
             .subscribe { list ->
-                subjects.layoutManager = GridLayoutManager(this.context, 3)
-                subjects.adapter = SubjectAdapter(list)
+                binding.subjects.layoutManager = GridLayoutManager(this.context, 3)
+                binding.subjects.adapter = SubjectAdapter(list)
             }
-        return root
     }
 
     open class AbsSubjectViewHolder(v: View) : RecyclerView.ViewHolder(v) {

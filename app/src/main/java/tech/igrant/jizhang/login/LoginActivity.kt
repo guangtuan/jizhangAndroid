@@ -15,6 +15,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import tech.igrant.jizhang.R
 import tech.igrant.jizhang.framework.RetrofitFacade
 import tech.igrant.jizhang.main.MainActivity
+import tech.igrant.jizhang.state.EnvManager
 
 class LoginActivity : AppCompatActivity() {
 
@@ -55,24 +56,29 @@ class LoginActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { runOnUiThread { loading.visibility = VISIBLE } }
-                .subscribe({
-                    loading.visibility = GONE
-                    TokenManager.set(
-                        TokenManager.AppDataSource(
-                            token = it.token,
-                            email = it.email,
-                            nickname = it.nickname,
-                            endpoint = endpointStr,
-                            userId = it.userId
+                .subscribe(
+                    {
+                        loading.visibility = GONE
+                        TokenManager.set(
+                            TokenManager.AppDataSource(
+                                token = it.token,
+                                email = it.email,
+                                nickname = it.nickname,
+                                endpoint = endpointStr,
+                                userId = it.userId
+                            )
                         )
-                    )
-                    MainActivity.start(this)
-                    finish()
-                }, {
-                    it.printStackTrace()
-                    loading.visibility = GONE
-                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                })
+                        EnvManager.init(EnvManager.State.ONLINE)
+                        MainActivity.start(this)
+                        finish()
+                    },
+                    {
+                        it.printStackTrace()
+                        loading.visibility = GONE
+                        EnvManager.init(EnvManager.State.OFFLINE)
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    }
+                )
         }
     }
 

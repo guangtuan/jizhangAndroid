@@ -19,6 +19,7 @@ import tech.igrant.jizhang.databinding.FragmentDetailBinding
 import tech.igrant.jizhang.framework.PageQuery
 import tech.igrant.jizhang.framework.RetrofitFacade
 import tech.igrant.jizhang.framework.ext.inflate
+import tech.igrant.jizhang.state.EnvManager
 import java.time.format.DateTimeFormatter
 
 class DetailFragment : Fragment() {
@@ -40,6 +41,9 @@ class DetailFragment : Fragment() {
     }
 
     private fun loadData() {
+        if (EnvManager.offline()) {
+            return
+        }
         RetrofitFacade.get().create(DetailService::class.java).list(
             PageQuery(
                 queryParam = DetailService.DetailQuery.first(),

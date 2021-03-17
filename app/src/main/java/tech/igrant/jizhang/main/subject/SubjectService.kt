@@ -4,7 +4,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.http.GET
+import tech.igrant.jizhang.framework.LocalStorage
 import tech.igrant.jizhang.framework.RetrofitFacade
+import tech.igrant.jizhang.state.EnvManager
 import java.time.LocalDateTime
 
 interface SubjectService {
@@ -27,15 +29,26 @@ interface SubjectService {
         const val LEVEL_BIG = 1
         const val LEVEL_SMALL = 2
 
+        private const val DB = "subjects";
+
         private var memoryCache: MutableList<SubjectVo> = mutableListOf()
 
         fun loadSubject(): Observable<List<SubjectVo>> {
-            return if (memoryCache.isNotEmpty()) {
+            if (EnvManager.offline()) {
+                return Observable.just(LocalStorage.instance().batchGet(DB, SubjectVo::class.java))
+            }
+            if (memoryCache.isNotEmpty()) {
                 Observable.just(memoryCache.toList()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-            } else RetrofitFacade.get().create(SubjectService::class.java)
+            }
+            return RetrofitFacade.get().create(SubjectService::class.java)
                 .list()
-                .doOnNext { memoryCache.clear(); memoryCache.addAll(it) }
+                .doOnNext {
+                    memoryCache.clear()
+                    memoryCache.addAll(it)
+                    LocalStorage.instance().batchClear(DB)
+                    LocalStorage.instance().batchSave(DB, { "$(subject.id)" }, it)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
         }

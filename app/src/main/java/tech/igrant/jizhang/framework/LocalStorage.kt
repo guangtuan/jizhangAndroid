@@ -3,7 +3,6 @@ package tech.igrant.jizhang.framework
 import android.content.Context
 import com.google.gson.Gson
 import java.io.File
-import java.util.function.Function
 
 class LocalStorage private constructor() {
 
@@ -39,12 +38,18 @@ class LocalStorage private constructor() {
         }
     }
 
-    fun <T> batchSave(db: String, keyGetter: Function<T, String>, data: List<T>) {
+    fun <T> batchSave(db: String, getKey: (t: T) -> String, data: List<T>) {
         for (datum in data) {
-            keyGetter.apply(datum).also {
+            getKey(datum).also {
                 put(db, it, datum)
             }
         }
+    }
+
+    fun batchClear(db: String) {
+        File(cacheDir, db).list()
+            ?.mapNotNull { File(cacheDir, it) }
+            ?.forEach { it.delete() }
     }
 
     fun <T> batchGet(db: String, tClass: Class<T>): List<T> {
