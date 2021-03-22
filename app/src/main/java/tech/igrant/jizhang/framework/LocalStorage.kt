@@ -1,6 +1,7 @@
 package tech.igrant.jizhang.framework
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import java.io.File
 
@@ -13,7 +14,8 @@ class LocalStorage private constructor() {
     val gson = Gson()
 
     fun init(context: Context) {
-        val f = File(context.externalCacheDir, cacheDirPath)
+        val f = File(context.cacheDir, cacheDirPath)
+        Log.i("LocalStorage", f.absolutePath)
         if (!f.exists()) {
             f.mkdir()
         }
@@ -41,6 +43,7 @@ class LocalStorage private constructor() {
     fun <T> batchSave(db: String, getKey: (t: T) -> String, data: List<T>) {
         for (datum in data) {
             getKey(datum).also {
+                Log.i("LocalStorage", "put key $it")
                 put(db, it, datum)
             }
         }
@@ -53,10 +56,12 @@ class LocalStorage private constructor() {
     }
 
     fun <T> batchGet(db: String, tClass: Class<T>): List<T> {
-        return File(cacheDir, db).list()
-            ?.mapNotNull { File(cacheDir, it).readText() }
-            ?.map { gson.fromJson(it, tClass) }
-            .orEmpty()
+        return File(cacheDir, db).let { dir ->
+            dir.list()
+                ?.mapNotNull { f -> File(dir, f).readText() }
+                ?.map { content -> gson.fromJson(content, tClass) }
+                .orEmpty()
+        }
     }
 
     companion object {

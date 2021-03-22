@@ -1,5 +1,6 @@
 package tech.igrant.jizhang.main.subject
 
+import android.util.Log
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -33,9 +34,35 @@ interface SubjectService {
 
         private var memoryCache: MutableList<SubjectVo> = mutableListOf()
 
+        fun findSubjectFromMemory(id: Long): SubjectVo? {
+            if (memoryCache.isNotEmpty()) {
+                for (subjectVo in memoryCache) {
+                    if (subjectVo.children.any { child -> child.id == id }) {
+                        return subjectVo.children.find { child -> child.id == id }
+                    }
+                }
+                return null
+            }
+            Log.i("TAG", memoryCache.joinToString { it.toString() })
+            Log.i("TAG", "input $id")
+            val localData = LocalStorage.instance().batchGet(DB, SubjectVo::class.java)
+            memoryCache.clear()
+            memoryCache.addAll(localData)
+            for (subjectVo in memoryCache) {
+                if (subjectVo.children.any { child -> child.id == id }) {
+                    return subjectVo.children.find { child -> child.id == id }
+                }
+            }
+            return null
+        }
+
         fun loadSubject(): Observable<List<SubjectVo>> {
             if (EnvManager.offline()) {
                 return Observable.just(LocalStorage.instance().batchGet(DB, SubjectVo::class.java))
+                    .doOnNext {
+                        memoryCache.clear()
+                        memoryCache.addAll(it)
+                    }
             }
             if (memoryCache.isNotEmpty()) {
                 Observable.just(memoryCache.toList()).subscribeOn(Schedulers.io())
@@ -47,7 +74,7 @@ interface SubjectService {
                     memoryCache.clear()
                     memoryCache.addAll(it)
                     LocalStorage.instance().batchClear(DB)
-                    LocalStorage.instance().batchSave(DB, { "$(subject.id)" }, it)
+                    LocalStorage.instance().batchSave(DB, { subject -> "" + subject.id }, it)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

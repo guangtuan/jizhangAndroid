@@ -13,7 +13,7 @@ fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false):
     return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 }
 
-fun Date.toLocalDate(): LocalDateTime {
+fun Date.toLocalDateTime(): LocalDateTime {
     return LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault())
 }
 

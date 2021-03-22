@@ -69,8 +69,10 @@ class LoginActivity : AppCompatActivity() {
                             )
                         )
                         EnvManager.init(EnvManager.State.ONLINE)
-                        MainActivity.start(this)
-                        finish()
+                        runOnUiThread {
+                            MainActivity.start(this)
+                            finish()
+                        }
                     },
                     {
                         it.printStackTrace()
