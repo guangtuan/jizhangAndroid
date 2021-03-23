@@ -34,5 +34,10 @@
     <string name="offline_data_title">发现离线数据</string>
     <string name="offline_data_tips">发现%d条离线数据，是否同步至服务器?</string>
     <string name="cancel">取消</string>
+    <string name="click_select_subject">点击选择科目</string>
+    <string name="click_select_source_account">点击选择源账户</string>
+    <string name="click_select_dest_account">点击选择目标账户</string>
+    <string name="click_input_amount">点击输入金额</string>
+    <string name="click_input_remark">点击输入备注</string>
 
 </resources>

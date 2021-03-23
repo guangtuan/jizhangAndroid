@@ -37,6 +37,17 @@
             tools:text="建行卡" />
 
         <TextView
+            android:id="@+id/user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/account"
+            android:textColor="@color/text_card"
+            android:textSize="14sp"
+            tools:text="grant" />
+
+        <TextView
             android:id="@+id/amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

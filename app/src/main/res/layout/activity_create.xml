@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:text="@string/click_select_subject"
             android:textColor="@color/secondary_text"
             android:textSize="14sp" />
 
@@ -39,7 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/primary_text"
+            android:text="@string/click_select_source_account"
+            android:textColor="@color/secondary_text"
             android:textSize="14sp" />
 
         <TextView
@@ -54,7 +56,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/primary_text"
+            android:text="@string/click_select_dest_account"
+            android:textColor="@color/secondary_text"
             android:textSize="14sp" />
 
         <TextView
@@ -68,6 +71,7 @@
             android:id="@+id/create_detail_amount_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/click_input_amount"
             android:inputType="numberDecimal"
             android:textColor="@color/primary_text" />
 
@@ -82,7 +86,7 @@
             android:id="@+id/create_detail_date_input"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/secondary_text"
             tools:text="2021/03/05" />
 
         <TextView
@@ -96,6 +100,7 @@
             android:id="@+id/create_detail_remark_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/click_input_remark"
             android:inputType="textMultiLine"
             android:textColor="@color/primary_text" />
 

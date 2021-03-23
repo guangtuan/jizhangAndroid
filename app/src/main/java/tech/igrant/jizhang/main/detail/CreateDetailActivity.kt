@@ -106,9 +106,30 @@ class CreateDetailActivity : AppCompatActivity() {
             }
         }
         binding.createDetailSaveButton.setOnClickListener {
-            detailTo.amount = binding.createDetailAmountInput.text.toString().toInt() * 100
+            val amountText = binding.createDetailAmountInput.text.toString()
+            if (amountText.isEmpty()) {
+                Toast.makeText(this, "请输入金额", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            detailTo.amount = amountText.toInt() * 100
             detailTo.remark = binding.createDetailRemarkInput.text.toString()
             Log.i("create", detailTo.toString())
+
+            if (detailTo.amount == 0) {
+                Toast.makeText(this, "请输入金额", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (detailTo.destAccountId == null && detailTo.sourceAccountId == null) {
+                Toast.makeText(this, "请选择来源账户或者目标账户", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if (detailTo.subjectId == -1L) {
+                Toast.makeText(this, "请选择科目", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             DetailService.create(detailTo)
                 .subscribe {
                     Toast.makeText(this, "create success", Toast.LENGTH_LONG).show()

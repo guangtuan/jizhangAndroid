@@ -173,6 +173,7 @@ class MainActivity : AppCompatActivity() {
                         parentId
                     ) = detailVo
                     holder.itemView.findViewById<TextView>(R.id.subject).text = "#$subjectName"
+                    holder.itemView.findViewById<TextView>(R.id.user).text = "@$username"
                     val amountTv = holder.itemView.findViewById<TextView>(R.id.amount)
                     if (detailVo.extern()) {
                         amountTv.text = "-¥${amount / 100}"
