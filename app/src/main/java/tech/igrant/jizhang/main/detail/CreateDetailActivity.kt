@@ -5,16 +5,9 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
-import tech.igrant.jizhang.databinding.ItemSelectBinding
 import tech.igrant.jizhang.framework.ext.toDate
 import tech.igrant.jizhang.framework.ext.toLocalDateTime
 import tech.igrant.jizhang.login.TokenManager
@@ -51,33 +44,49 @@ class CreateDetailActivity : AppCompatActivity() {
             .map {
                 it.map { sub ->
                     sub.children.map { child ->
-                        IdName(
+                        SelectorDialog.IdName(
                             child.id,
                             child.name
                         )
                     }
                 }.flatten()
             }
-            .subscribe {
-                val idNameAdapter = IdNameAdapter(it)
-                binding.createDetailSubjectInput.adapter = idNameAdapter
-                binding.createDetailSubjectInput.onItemSelectedListener =
-                    getOnItemSelectedListener { id -> detailTo.subjectId = id }
+            .subscribe { idNames ->
+                binding.createDetailSubjectInput.setOnClickListener {
+                    SelectorDialog.show(
+                        activity = this,
+                        idNames = idNames,
+                        onItemSelect = { idName ->
+                            binding.createDetailSubjectInput.text = idName.name
+                            detailTo.subjectId = idName.id
+                        }
+                    )
+                }
             }
         AccountService.loadAccount()
             .map {
-                it.map { acc -> IdName(acc.id, acc.name) }
+                it.map { acc -> SelectorDialog.IdName(acc.id, acc.name) }
             }
-            .subscribe {
-                IdNameAdapter(it).apply {
-                    binding.createDetailSourceAccountInput.adapter = this
-                    binding.createDetailSourceAccountInput.onItemSelectedListener =
-                        getOnItemSelectedListener { id -> detailTo.sourceAccountId = id }
+            .subscribe { idNames ->
+                binding.createDetailSourceAccountInput.setOnClickListener {
+                    SelectorDialog.show(
+                        activity = this,
+                        idNames = idNames,
+                        onItemSelect = { idName ->
+                            binding.createDetailSourceAccountInput.text = idName.name
+                            detailTo.sourceAccountId = idName.id
+                        }
+                    )
                 }
-                IdNameAdapter(it).apply {
-                    binding.createDetailDestAccountInput.adapter = this
-                    binding.createDetailDestAccountInput.onItemSelectedListener =
-                        getOnItemSelectedListener { id -> detailTo.destAccountId = id }
+                binding.createDetailDestAccountInput.setOnClickListener {
+                    SelectorDialog.show(
+                        activity = this,
+                        idNames = idNames,
+                        onItemSelect = { idName ->
+                            binding.createDetailDestAccountInput.text = idName.name
+                            detailTo.destAccountId = idName.id
+                        }
+                    )
                 }
             }
         bindDate()
@@ -112,56 +121,6 @@ class CreateDetailActivity : AppCompatActivity() {
     private fun bindDate() {
         binding.createDetailDateInput.text =
             detailTo.createdAt.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-    }
-
-    private fun getOnItemSelectedListener(after: (id: Long) -> Unit): AdapterView.OnItemSelectedListener {
-        return object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val adapter = parent?.adapter
-                if (adapter is IdNameAdapter) {
-                    val item = adapter.getItem(position)
-                    after(item.id)
-                }
-            }
-        }
-    }
-
-    data class IdName(val id: Long, val name: String)
-
-    class IdNameViewHolder(val view: View, val itemSelectBinding: ItemSelectBinding)
-
-    class IdNameAdapter(private val idNames: List<IdName>) : BaseAdapter() {
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val idNameViewHolder: IdNameViewHolder
-            if (convertView == null) {
-                val binding = ItemSelectBinding.inflate(
-                    LayoutInflater.from(parent?.context),
-                    parent,
-                    false
-                )
-                idNameViewHolder = IdNameViewHolder(binding.root, binding)
-                binding.root.tag = idNameViewHolder
-            } else {
-                idNameViewHolder = convertView.tag as IdNameViewHolder
-            }
-            idNameViewHolder.itemSelectBinding.itemSelectText.text = getItem(position).name
-            return idNameViewHolder.view
-        }
-
-        override fun getItem(position: Int): IdName = idNames[position]
-
-        override fun getItemId(position: Int): Long = idNames[position].id
-
-        override fun getCount() = idNames.size
     }
 
 }

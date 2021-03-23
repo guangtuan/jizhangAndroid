@@ -2,7 +2,6 @@ package tech.igrant.jizhang.main
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -89,13 +88,15 @@ class MainActivity : AppCompatActivity() {
                 AlertDialog.Builder(this)
                     .setTitle(getString(R.string.offline_data_title))
                     .setMessage(String.format(getString(R.string.offline_data_tips), list.size))
-                    .setOnKeyListener { dialog, keyCode, event ->
-                        when (keyCode) {
-                            Dialog.BUTTON_POSITIVE -> {
-                                DetailService.createBatch(list).subscribe { this.loadData() }
-                            }
+                    .setNegativeButton(getText(R.string.cancel)) { dialog, which -> dialog.dismiss() }
+                    .setPositiveButton(getText(R.string.ok)) { dialog, which ->
+                        DetailService.createBatch(
+                            list
+                        ).subscribe {
+                            dialog.dismiss()
+                            DetailService.clearLocal()
+                            loadData()
                         }
-                        return@setOnKeyListener true
                     }
                     .show()
             }

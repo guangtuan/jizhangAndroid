@@ -50,9 +50,10 @@ class LocalStorage private constructor() {
     }
 
     fun batchClear(db: String) {
-        File(cacheDir, db).list()
-            ?.mapNotNull { File(cacheDir, it) }
-            ?.forEach { it.delete() }
+        File(cacheDir, db).let { dbDir ->
+            dbDir.list()?.mapNotNull { singleFile -> File(dbDir, singleFile) }
+                ?.forEach { it.delete() }
+        }
     }
 
     fun <T> batchGet(db: String, tClass: Class<T>): List<T> {

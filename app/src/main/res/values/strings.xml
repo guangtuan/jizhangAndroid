@@ -33,5 +33,6 @@
     <string name="offline">离线模式</string>
     <string name="offline_data_title">发现离线数据</string>
     <string name="offline_data_tips">发现%d条离线数据，是否同步至服务器?</string>
+    <string name="cancel">取消</string>
 
 </resources>

@@ -140,6 +140,10 @@ interface DetailService {
                 .observeOn(AndroidSchedulers.mainThread())
         }
 
+        fun clearLocal() {
+            LocalStorage.instance().batchClear(DB)
+        }
+
         const val NOT_SPLITED = 0
         const val SPLITED = 1
         const val SPLIT_PARENT = 2

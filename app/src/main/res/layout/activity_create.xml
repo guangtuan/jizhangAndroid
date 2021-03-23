@@ -19,15 +19,13 @@
             android:text="@string/title_subjects"
             android:textColor="@color/primary_text" />
 
-        <Spinner
+        <TextView
             android:id="@+id/create_detail_subject_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:labelFor="@id/create_detail_subject_title"
             android:textColor="@color/secondary_text"
-            android:textSize="14sp"
-            tools:listitem="@layout/item_select" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/create_detail_source_account_title"
@@ -36,15 +34,13 @@
             android:text="@string/title_source_account"
             android:textColor="@color/primary_text" />
 
-        <Spinner
+        <TextView
             android:id="@+id/create_detail_source_account_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:labelFor="@id/create_detail_subject_title"
             android:textColor="@color/primary_text"
-            android:textSize="14sp"
-            tools:listitem="@layout/item_select" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/create_detail_dest_account_title"
@@ -53,15 +49,13 @@
             android:text="@string/title_dest_account"
             android:textColor="@color/primary_text" />
 
-        <Spinner
+        <TextView
             android:id="@+id/create_detail_dest_account_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:labelFor="@id/create_detail_subject_title"
             android:textColor="@color/primary_text"
-            android:textSize="14sp"
-            tools:listitem="@layout/item_select" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/create_detail_amount_title"
