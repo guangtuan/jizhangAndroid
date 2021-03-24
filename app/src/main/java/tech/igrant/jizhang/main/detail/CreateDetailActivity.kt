@@ -111,7 +111,7 @@ class CreateDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "请输入金额", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            detailTo.amount = amountText.toInt() * 100
+            detailTo.amount = (amountText.toDouble() * 100).toInt()
             detailTo.remark = binding.createDetailRemarkInput.text.toString()
             Log.i("create", detailTo.toString())
 
