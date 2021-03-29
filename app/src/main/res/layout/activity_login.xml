@@ -22,7 +22,7 @@
         android:importantForAutofill="no"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
-        android:text="http://192.168.31.190:44444"
+        android:text="http://jizhang.app"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
