@@ -29,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val endpoint = findViewById<EditText>(R.id.endpoint_address)
         val loginName = findViewById<EditText>(R.id.login_name)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
@@ -38,7 +37,6 @@ class LoginActivity : AppCompatActivity() {
         login.setOnClickListener {
             val loginNameStr = loginName.text?.toString()
             val passwordStr = password.text?.toString()
-            val endpointStr = endpoint.text?.toString()
             if (loginNameStr == null) {
                 Toast.makeText(this, "请输入登录名", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -47,12 +45,8 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "请输入密码", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            if (endpointStr == null) {
-                Toast.makeText(this, "请输入请求地址", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
             val form = LoginService.LoginFrom(loginNameStr, passwordStr)
-            RetrofitFacade.tmp(endpointStr).create(LoginService::class.java).login(form)
+            RetrofitFacade.tmp().create(LoginService::class.java).login(form)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { runOnUiThread { loading.visibility = VISIBLE } }
@@ -64,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
                                 token = it.token,
                                 email = it.email,
                                 nickname = it.nickname,
-                                endpoint = endpointStr,
                                 userId = it.userId
                             )
                         )

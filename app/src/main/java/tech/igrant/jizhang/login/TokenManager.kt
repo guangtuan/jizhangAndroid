@@ -9,7 +9,6 @@ class TokenManager {
         var token: String,
         var email: String,
         var nickname: String,
-        var endpoint: String,
         val userId: Long
     )
 

@@ -55,9 +55,9 @@ class RetrofitFacade private constructor() {
                 .build()
         }
 
-        fun tmp(endpoint: String): Retrofit {
+        fun tmp(): Retrofit {
             return Retrofit.Builder()
-                .baseUrl(endpoint)
+                .baseUrl("http://jizhang.app")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .client(client())
@@ -106,7 +106,7 @@ class RetrofitFacade private constructor() {
                     .create()
             )
             retrofit = Retrofit.Builder()
-                .baseUrl(appDataSource.endpoint)
+                .baseUrl("http://jizhang.app")
                 .addConverterFactory(gsonConverterFactory)
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .client(client(appDataSource.token, appDataSource.email))

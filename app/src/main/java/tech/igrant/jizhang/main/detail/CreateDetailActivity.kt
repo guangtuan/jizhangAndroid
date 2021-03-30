@@ -19,6 +19,9 @@ import java.time.format.DateTimeFormatter
 class CreateDetailActivity : AppCompatActivity() {
 
     companion object {
+        val MODE_EDIT = 1
+        val MODE_CREATE = 2
+
         val REQUEST_CODE = 1
 
         fun startForResult(activity: Activity) {
