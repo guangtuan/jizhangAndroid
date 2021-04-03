@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,6 +18,7 @@ import tech.igrant.jizhang.R
 import tech.igrant.jizhang.databinding.ActivityMainBinding
 import tech.igrant.jizhang.framework.PageQuery
 import tech.igrant.jizhang.framework.RetrofitFacade
+import tech.igrant.jizhang.framework.ext.format
 import tech.igrant.jizhang.framework.ext.inflate
 import tech.igrant.jizhang.main.detail.CreateDetailActivity
 import tech.igrant.jizhang.main.detail.DetailService
@@ -133,6 +135,8 @@ class MainActivity : AppCompatActivity() {
     class DetailAdapter(private val renderLine: List<RenderLine>) :
         RecyclerView.Adapter<DetailViewHolder>() {
 
+        private val colors = listOf<Int>(R.color.bg_1, R.color.bg_2, R.color.bg_3)
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
             return when (viewType) {
                 RenderLine.BANNER -> {
@@ -172,14 +176,15 @@ class MainActivity : AppCompatActivity() {
                         splited,
                         parentId
                     ) = detailVo
+                    holder.itemView.findViewById<CardView>(R.id.detail_card).setCardBackgroundColor(holder.itemView.context.getColor(colors.random()))
                     holder.itemView.findViewById<TextView>(R.id.subject).text = "#$subjectName"
                     holder.itemView.findViewById<TextView>(R.id.user).text = "@$username"
                     val amountTv = holder.itemView.findViewById<TextView>(R.id.amount)
                     if (detailVo.extern()) {
-                        amountTv.text = "-¥${amount / 100}"
+                        amountTv.text = "-¥${(amount.toDouble() / 100).format(2)}"
                         amountTv.setTextColor(holder.itemView.context.getColor(R.color.amount_out))
                     } else {
-                        amountTv.text = "+¥${amount / 100}"
+                        amountTv.text = "+¥${(amount.toDouble() / 100).format(2)}"
                         amountTv.setTextColor(holder.itemView.context.getColor(R.color.amount_in))
                     }
                     holder.itemView.findViewById<TextView>(R.id.account).text =

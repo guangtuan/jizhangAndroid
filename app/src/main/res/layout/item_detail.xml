@@ -7,23 +7,22 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
-    android:layout_marginTop="4dp"
     android:layout_marginRight="16dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginBottom="8dp"
     app:cardBackgroundColor="@color/bg_1"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="16dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:padding="8dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_subject"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:chipBackgroundColor="@color/primary"
             tools:text="#吃饭" />
 
@@ -33,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textColor="@color/text_card"
-            android:textSize="14sp"
+            android:textSize="12sp"
             tools:text="建行卡" />
 
         <TextView
@@ -44,7 +43,7 @@
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/account"
             android:textColor="@color/text_card"
-            android:textSize="14sp"
+            android:textSize="12sp"
             tools:text="grant" />
 
         <TextView
@@ -55,7 +54,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:textColor="@color/amount_out"
-            android:textSize="24sp"
+            android:textSize="20sp"
             tools:text="¥123" />
 
     </RelativeLayout>

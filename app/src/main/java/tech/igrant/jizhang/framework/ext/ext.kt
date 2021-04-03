@@ -20,3 +20,5 @@ fun Date.toLocalDateTime(): LocalDateTime {
 fun LocalDateTime.toDate(): Date {
     return Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
 }
+
+fun Double.format(digits: Int) = "%.${digits}f".format(this)
