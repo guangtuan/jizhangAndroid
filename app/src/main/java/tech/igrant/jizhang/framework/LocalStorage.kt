@@ -2,7 +2,6 @@ package tech.igrant.jizhang.framework
 
 import android.content.Context
 import android.util.Log
-import com.google.gson.Gson
 import java.io.File
 
 class LocalStorage private constructor() {
@@ -10,8 +9,6 @@ class LocalStorage private constructor() {
     private val cacheDirPath = "localDb"
 
     lateinit var cacheDir: File
-
-    val gson = Gson()
 
     fun init(context: Context) {
         val f = File(context.cacheDir, cacheDirPath)
@@ -27,7 +24,7 @@ class LocalStorage private constructor() {
             if (!it.exists()) {
                 it.mkdir()
             }
-            File(it, key).writeText(gson.toJson(t))
+            File(it, key).writeText(Serialization.toJson(t))
         }
     }
 
@@ -36,7 +33,7 @@ class LocalStorage private constructor() {
             if (!it.exists()) {
                 return null;
             }
-            gson.fromJson(File(it, key).readText(), tClass)
+            Serialization.fromJson(File(it, key).readText(), tClass)
         }
     }
 
@@ -52,16 +49,16 @@ class LocalStorage private constructor() {
     fun batchClear(db: String) {
         File(cacheDir, db).let { dbDir ->
             dbDir.list()?.mapNotNull { singleFile -> File(dbDir, singleFile) }
-                ?.forEach { it.delete() }
+                    ?.forEach { it.delete() }
         }
     }
 
     fun <T> batchGet(db: String, tClass: Class<T>): List<T> {
         return File(cacheDir, db).let { dir ->
             dir.list()
-                ?.mapNotNull { f -> File(dir, f).readText() }
-                ?.map { content -> gson.fromJson(content, tClass) }
-                .orEmpty()
+                    ?.mapNotNull { f -> File(dir, f).readText() }
+                    ?.map { content -> Serialization.fromJson(content, tClass) }
+                    .orEmpty()
         }
     }
 

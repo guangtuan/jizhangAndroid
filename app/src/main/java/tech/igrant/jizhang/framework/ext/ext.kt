@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -22,3 +21,7 @@ fun LocalDateTime.toDate(): Date {
 }
 
 fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
+fun uuid(): String {
+    return UUID.randomUUID().toString().replace("-", "")
+}

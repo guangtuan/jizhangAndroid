@@ -1,62 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/detail_card"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/bg_1"
-    app:cardCornerRadius="16dp">
+    android:layout_marginBottom="16dp">
 
-    <RelativeLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/detail_card"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/bg_1"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true">
 
-        <TextView
-            android:id="@+id/subject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_subject"
-            android:textSize="16sp"
-            app:chipBackgroundColor="@color/primary"
-            tools:text="#吃饭" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textColor="@color/text_card"
-            android:textSize="12sp"
-            tools:text="建行卡" />
+            <TextView
+                android:id="@+id/subject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_subject"
+                android:textSize="16sp"
+                app:chipBackgroundColor="@color/primary"
+                tools:text="#吃饭" />
 
-        <TextView
-            android:id="@+id/user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/account"
-            android:textColor="@color/text_card"
-            android:textSize="12sp"
-            tools:text="grant" />
+            <TextView
+                android:id="@+id/account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/text_card"
+                android:textSize="12sp"
+                tools:text="建行卡" />
 
-        <TextView
-            android:id="@+id/amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/amount_out"
-            android:textSize="20sp"
-            tools:text="¥123" />
+            <TextView
+                android:id="@+id/user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/account"
+                android:textColor="@color/text_card"
+                android:textSize="12sp"
+                tools:text="grant" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/amount_out"
+                android:textSize="20sp"
+                tools:text="¥123" />
 
-</androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -8,8 +8,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
+import tech.igrant.jizhang.framework.Serialization
+import tech.igrant.jizhang.framework.ext.format
 import tech.igrant.jizhang.framework.ext.toDate
 import tech.igrant.jizhang.framework.ext.toLocalDateTime
+import tech.igrant.jizhang.framework.ext.uuid
 import tech.igrant.jizhang.login.TokenManager
 import tech.igrant.jizhang.main.account.AccountService
 import tech.igrant.jizhang.main.subject.SubjectService
@@ -19,92 +22,148 @@ import java.time.format.DateTimeFormatter
 class CreateDetailActivity : AppCompatActivity() {
 
     companion object {
-        val MODE_EDIT = 1
-        val MODE_CREATE = 2
+        const val MODE_EDIT = 1
+        const val MODE_CREATE = 2
 
-        val REQUEST_CODE = 1
+        const val KEY_EDITING = "editing"
+        const val KEY_MODE = "keyMode"
 
-        fun startForResult(activity: Activity) {
-            activity.startActivityForResult(
-                Intent(activity, CreateDetailActivity::class.java),
-                REQUEST_CODE
-            )
+        const val COMMON_REQUEST_CODE = 1
+
+        fun startAsCreateMode(activity: Activity) {
+            Intent(activity, CreateDetailActivity::class.java).also {
+                it.putExtra(KEY_MODE, MODE_CREATE)
+                activity.startActivityForResult(
+                        it,
+                        COMMON_REQUEST_CODE
+                )
+            }
+        }
+
+        fun startAsEditMode(activity: Activity, detailDisplay: DetailService.DetailTransferObject.Local) {
+            Intent(activity, CreateDetailActivity::class.java).also {
+                it.putExtra(KEY_MODE, MODE_EDIT)
+                it.putExtra(KEY_EDITING, Serialization.toJson(detailDisplay))
+                activity.startActivityForResult(
+                        it,
+                        COMMON_REQUEST_CODE
+                )
+            }
         }
     }
 
     private lateinit var binding: ActivityCreateBinding
 
-    private var detailTo = DetailService.DetailTo()
+    private var detail = DetailService.DetailTransferObject.Local(
+            localId = uuid(), remoteId = -1
+    )
+
+    private var mode: Int = MODE_CREATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateBinding.inflate(layoutInflater)
         TokenManager.get()?.let {
-            detailTo.userId = it.userId
+            detail.userId = it.userId
+        }
+        intent?.let { intent ->
+            intent.extras?.getInt(KEY_MODE)?.let {
+                mode = it
+            }
+            intent.extras?.getString(KEY_EDITING)?.let { detailToStr ->
+                detail = Serialization.fromJson(detailToStr, DetailService.DetailTransferObject.Local::class.java)
+            }
+        }
+        when (mode) {
+            MODE_CREATE -> {
+                supportActionBar?.let {
+                    it.title = "新建明细"
+                }
+            }
+            MODE_EDIT -> {
+                supportActionBar?.let {
+                    it.title = "编辑明细"
+                }
+            }
         }
         setContentView(binding.root)
+        if (detail.amount != 0) {
+            binding.createDetailAmountInput.setText((detail.amount.toDouble() / 100).format(2))
+        }
+        detail.remark?.let {
+            binding.createDetailRemarkInput.setText(it)
+        }
         SubjectService.loadSubject()
-            .map {
-                it.map { sub ->
-                    sub.children.map { child ->
-                        SelectorDialog.IdName(
-                            child.id,
-                            child.name
+                .map {
+                    it.map { sub ->
+                        sub.children.map { child ->
+                            SelectorDialog.IdName(
+                                    child.id,
+                                    child.name
+                            )
+                        }
+                    }.flatten()
+                }
+                .subscribe { idNames ->
+                    if (detail.subjectId != -1L) {
+                        binding.createDetailSubjectInput.text = idNames.find { it.id == detail.subjectId }?.name
+                    }
+                    binding.createDetailSubjectInput.setOnClickListener {
+                        SelectorDialog.show(
+                                activity = this,
+                                idNames = idNames,
+                                onItemSelect = { idName ->
+                                    binding.createDetailSubjectInput.text = idName.name
+                                    detail.subjectId = idName.id
+                                }
                         )
                     }
-                }.flatten()
-            }
-            .subscribe { idNames ->
-                binding.createDetailSubjectInput.setOnClickListener {
-                    SelectorDialog.show(
-                        activity = this,
-                        idNames = idNames,
-                        onItemSelect = { idName ->
-                            binding.createDetailSubjectInput.text = idName.name
-                            detailTo.subjectId = idName.id
-                        }
-                    )
                 }
-            }
         AccountService.loadAccount()
-            .map {
-                it.map { acc -> SelectorDialog.IdName(acc.id, acc.name) }
-            }
-            .subscribe { idNames ->
-                binding.createDetailSourceAccountInput.setOnClickListener {
-                    SelectorDialog.show(
-                        activity = this,
-                        idNames = idNames,
-                        onItemSelect = { idName ->
-                            binding.createDetailSourceAccountInput.text = idName.name
-                            detailTo.sourceAccountId = idName.id
-                        }
-                    )
+                .map {
+                    it.map { acc -> SelectorDialog.IdName(acc.id, acc.name) }
                 }
-                binding.createDetailDestAccountInput.setOnClickListener {
-                    SelectorDialog.show(
-                        activity = this,
-                        idNames = idNames,
-                        onItemSelect = { idName ->
-                            binding.createDetailDestAccountInput.text = idName.name
-                            detailTo.destAccountId = idName.id
-                        }
-                    )
+                .subscribe { idNames ->
+                    detail.sourceAccountId?.let {
+                        binding.createDetailSourceAccountInput.text = idNames.find { idName -> idName.id == it }?.name
+                    }
+                    binding.createDetailSourceAccountInput.setOnClickListener {
+                        SelectorDialog.show(
+                                activity = this,
+                                idNames = idNames,
+                                onItemSelect = { idName ->
+                                    binding.createDetailSourceAccountInput.text = idName.name
+                                    detail.sourceAccountId = idName.id
+                                }
+                        )
+                    }
+                    detail.destAccountId?.let {
+                        binding.createDetailDestAccountInput.text = idNames.find { idName -> idName.id == it }?.name
+                    }
+                    binding.createDetailDestAccountInput.setOnClickListener {
+                        SelectorDialog.show(
+                                activity = this,
+                                idNames = idNames,
+                                onItemSelect = { idName ->
+                                    binding.createDetailDestAccountInput.text = idName.name
+                                    detail.destAccountId = idName.id
+                                }
+                        )
+                    }
                 }
-            }
         bindDate()
         binding.createDetailDateInput.setOnClickListener {
-            detailTo.createdAt.toLocalDateTime().apply {
+            detail.createdAt.toLocalDateTime().apply {
                 DatePickerDialog(
-                    this@CreateDetailActivity,
-                    DatePickerDialog.OnDateSetListener { _, year, month, day ->
-                        detailTo.createdAt =
-                            LocalDateTime.of(year, month + 1, day, 0, 0, 1).toDate()
-                        bindDate()
-                    },
-                    this.year,
-                    this.monthValue - 1,
-                    this.dayOfMonth
+                        this@CreateDetailActivity,
+                        DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                            detail.createdAt =
+                                    LocalDateTime.of(year, month + 1, day, 0, 0, 1).toDate()
+                            bindDate()
+                        },
+                        this.year,
+                        this.monthValue - 1,
+                        this.dayOfMonth
                 ).show()
             }
         }
@@ -114,37 +173,45 @@ class CreateDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "请输入金额", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            detailTo.amount = (amountText.toDouble() * 100).toInt()
-            detailTo.remark = binding.createDetailRemarkInput.text.toString()
-            Log.i("create", detailTo.toString())
+            detail.amount = (amountText.toDouble() * 100).toInt()
+            detail.remark = binding.createDetailRemarkInput.text.toString()
+            Log.i("create", detail.toString())
 
-            if (detailTo.amount == 0) {
+            if (detail.amount == 0) {
                 Toast.makeText(this, "请输入金额", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (detailTo.destAccountId == null && detailTo.sourceAccountId == null) {
+            if (detail.destAccountId == null && detail.sourceAccountId == null) {
                 Toast.makeText(this, "请选择来源账户或者目标账户", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (detailTo.subjectId == -1L) {
+            if (detail.subjectId == -1L) {
                 Toast.makeText(this, "请选择科目", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
-            DetailService.create(detailTo)
-                .subscribe {
-                    Toast.makeText(this, "create success", Toast.LENGTH_LONG).show()
-                    this.setResult(Activity.RESULT_OK)
-                    this.finish()
-                }
+            if (mode == MODE_CREATE) {
+                DetailService.create(detail)
+                        .subscribe {
+                            Toast.makeText(this, "create success", Toast.LENGTH_LONG).show()
+                            this.setResult(Activity.RESULT_OK)
+                            this.finish()
+                        }
+            } else {
+                DetailService.update(detail)
+                        .subscribe {
+                            Toast.makeText(this, "update success", Toast.LENGTH_LONG).show()
+                            this.setResult(Activity.RESULT_OK)
+                            this.finish()
+                        }
+            }
         }
     }
 
     private fun bindDate() {
         binding.createDetailDateInput.text =
-            detailTo.createdAt.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                detail.createdAt.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
 
 }
