@@ -40,6 +40,17 @@ class CreateDetailActivity : AppCompatActivity() {
             }
         }
 
+        fun startAsCreateMode(activity: Activity, detailDisplay: DetailService.DetailTransferObject.Local) {
+            Intent(activity, CreateDetailActivity::class.java).also {
+                it.putExtra(KEY_MODE, MODE_CREATE)
+                it.putExtra(KEY_EDITING, Serialization.toJson(detailDisplay))
+                activity.startActivityForResult(
+                        it,
+                        COMMON_REQUEST_CODE
+                )
+            }
+        }
+
         fun startAsEditMode(activity: Activity, detailDisplay: DetailService.DetailTransferObject.Local) {
             Intent(activity, CreateDetailActivity::class.java).also {
                 it.putExtra(KEY_MODE, MODE_EDIT)

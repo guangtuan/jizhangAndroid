@@ -18,6 +18,7 @@ import tech.igrant.jizhang.databinding.ItemDetailBinding
 import tech.igrant.jizhang.databinding.ItemDetailDateBinding
 import tech.igrant.jizhang.framework.ext.format
 import tech.igrant.jizhang.main.detail.CreateDetailActivity
+import tech.igrant.jizhang.main.detail.DetailAction
 import tech.igrant.jizhang.main.detail.DetailService
 import tech.igrant.jizhang.state.EnvManager
 import java.time.format.DateTimeFormatter
@@ -54,7 +55,19 @@ class MainActivity : AppCompatActivity() {
                     binding.details.adapter =
                             toAdapter(
                                     list,
-                                    onClickDetail = { CreateDetailActivity.startAsEditMode(this, it.toTransferObject()) }
+                                    onClickDetail = { detailVo, detailAction ->
+                                        when (detailAction) {
+                                            DetailAction.EDIT -> {
+                                                CreateDetailActivity.startAsEditMode(this, detailVo.toTransferObject())
+                                            }
+                                            DetailAction.COPY -> {
+                                                CreateDetailActivity.startAsCreateMode(this, detailVo.toTransferObject())
+                                            }
+                                            DetailAction.DELETE -> {
+                                                //
+                                            }
+                                        }
+                                    }
                             )
                 }
         if (EnvManager.online()) {
@@ -85,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun toAdapter(
             list: List<DetailService.DetailViewObject.Local>,
-            onClickDetail: (detailVo: DetailService.DetailViewObject.Local) -> Unit
+            onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
     ): DetailAdapter {
         val renderLines: ArrayList<RenderLine> = ArrayList()
         val grouped = list.groupBy { detail ->
@@ -111,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     abstract class AbsDetailViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        abstract fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local) -> Unit)
+        abstract fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit)
 
         companion object {
             val colors = listOf(R.color.bg_1, R.color.bg_2, R.color.bg_3)
@@ -121,12 +134,22 @@ class MainActivity : AppCompatActivity() {
     class DetailViewHolder(val v: View, private val itemDetailBinding: ItemDetailBinding) : AbsDetailViewHolder(v) {
 
         @SuppressLint("SetTextI18n")
-        override fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local) -> Unit) {
+        override fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit) {
             val detailVo = renderLine.t as DetailService.DetailViewObject.Local
             itemDetailBinding.detailCard.setCardBackgroundColor(v.context.getColor(colors.random()))
-            itemDetailBinding.detailCard.setOnClickListener { onClickDetail(detailVo) }
+            itemDetailBinding.optCopy.setOnClickListener { onClickDetail(detailVo, DetailAction.COPY) }
+            itemDetailBinding.optEdit.setOnClickListener { onClickDetail(detailVo, DetailAction.EDIT) }
+//            itemDetailBinding.optDelete.setOnClickListener { onClickDetail(detailVo, DetailAction.DELETE) }
+            itemDetailBinding.optDelete.visibility = View.GONE
             itemDetailBinding.subject.text = "#${detailVo.subjectName}"
             itemDetailBinding.user.text = "@${detailVo.username}"
+            detailVo.remark?.let {
+                if (it.isEmpty()) {
+                    itemDetailBinding.remark.text = "什么都没写哦"
+                } else {
+                    itemDetailBinding.remark.text = it
+                }
+            }
             if (detailVo.extern()) {
                 itemDetailBinding.amount.text = "-¥${(detailVo.amount.toDouble() / 100).format(2)}"
                 itemDetailBinding.amount.setTextColor(v.context.getColor(R.color.amount_out))
@@ -140,7 +163,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     class DetailViewDateHolder(val v: View, private val itemDetailDateBinding: ItemDetailDateBinding) : AbsDetailViewHolder(v) {
-        override fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local) -> Unit) {
+        override fun bind(renderLine: RenderLine, onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit) {
             val dateString = renderLine.t as String
             itemDetailDateBinding.detailListDate.text = dateString
         }
@@ -148,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
     class DetailAdapter(
             private val renderLine: List<RenderLine>,
-            private val onClickDetail: (detailVo: DetailService.DetailViewObject.Local) -> Unit
+            private val onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
     ) : RecyclerView.Adapter<AbsDetailViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AbsDetailViewHolder {
