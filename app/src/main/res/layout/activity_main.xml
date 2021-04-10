@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <com.wuhenzhizao.titlebar.widget.CommonTitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:fillStatusBar="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:leftTextColor="@color/text_remark"
+        app:leftType="textView"
+        app:statusBarColor="@android:color/white"
+        app:titleBarColor="@android:color/white" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/details"
         android:layout_width="match_parent"
@@ -14,8 +27,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"
         tools:listitem="@layout/item_detail" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

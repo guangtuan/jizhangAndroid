@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (EnvManager.offline()) {
-            supportActionBar?.setTitle(R.string.offline_mode_tips)
+            binding.titleBar.leftTextView.setText(R.string.offline_mode_tips)
         } else {
-            supportActionBar?.setTitle(R.string.online_mode_tips)
+            binding.titleBar.leftTextView.setText(R.string.online_mode_tips)
         }
         binding.createDetail.setOnClickListener {
             CreateDetailActivity.startAsCreateMode(this)

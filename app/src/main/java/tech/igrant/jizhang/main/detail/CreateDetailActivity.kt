@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import tech.igrant.jizhang.R
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
 import tech.igrant.jizhang.framework.Serialization
 import tech.igrant.jizhang.framework.ext.format
@@ -87,14 +88,10 @@ class CreateDetailActivity : AppCompatActivity() {
         }
         when (mode) {
             MODE_CREATE -> {
-                supportActionBar?.let {
-                    it.title = "新建明细"
-                }
+                binding.titleBar.leftTextView.setText(R.string.titleCreate)
             }
             MODE_EDIT -> {
-                supportActionBar?.let {
-                    it.title = "编辑明细"
-                }
+                binding.titleBar.leftTextView.setText(R.string.titleEdit)
             }
         }
         setContentView(binding.root)

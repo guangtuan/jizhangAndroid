@@ -10,52 +10,75 @@
     android:padding="32dp"
     tools:context=".startup.StartupActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/set_to_online"
+    <com.wuhenzhizao.titlebar.widget.CommonTitleBar
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="32dp"
-        android:layout_weight="1"
-        android:visibility="visible"
-        app:cardBackgroundColor="@color/bg_1"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="16dp">
+        android:layout_height="wrap_content"
+        app:fillStatusBar="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:leftTextColor="@color/text_remark"
+        app:leftType="textView"
+        app:statusBarColor="@android:color/white"
+        app:titleBarColor="@android:color/white" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/online"
-            android:textAlignment="center"
-            android:textColor="@color/amount_in"
-            android:textSize="32sp">
-
-        </TextView>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/set_to_offline"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="32dp"
-        android:layout_weight="1"
-        android:visibility="visible"
-        app:cardBackgroundColor="@color/bg_2"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="16dp">
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="32dp"
+        tools:context=".startup.StartupActivity">
 
-        <TextView
+        <androidx.cardview.widget.CardView
+            android:id="@+id/set_to_online"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/offline"
-            android:textAlignment="center"
-            android:textColor="@color/amount_out"
-            android:textSize="32sp">
+            android:layout_height="0dp"
+            android:layout_margin="32dp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:cardBackgroundColor="@color/bg_1"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="16dp">
 
-        </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/online"
+                android:textAlignment="center"
+                android:textColor="@color/amount_in"
+                android:textSize="32sp">
 
-    </androidx.cardview.widget.CardView>
+            </TextView>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/set_to_offline"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="32dp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:cardBackgroundColor="@color/bg_2"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/offline"
+                android:textAlignment="center"
+                android:textColor="@color/amount_out"
+                android:textSize="32sp">
+
+            </TextView>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
 
 </LinearLayout>

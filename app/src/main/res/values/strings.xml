@@ -46,6 +46,8 @@
     <string name="tools_account">@微信余额</string>
     <string name="tools_user">@alice</string>
     <string name="detail_remark">什么都没写哦</string>
+    <string name="titleCreate">新建明细</string>
+    <string name="titleEdit">编辑明细</string>
 
 
 </resources>
