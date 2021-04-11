@@ -62,6 +62,12 @@ class LocalStorage private constructor() {
         }
     }
 
+    fun delete(db: String, localId: String) {
+        File(cacheDir, db).let { dir ->
+            File(dir, localId).delete()
+        }
+    }
+
     companion object {
         private val localStorage = LocalStorage()
 

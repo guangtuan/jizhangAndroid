@@ -52,23 +52,32 @@ class MainActivity : AppCompatActivity() {
         DetailService.load()
                 .subscribe { list ->
                     binding.details.layoutManager = LinearLayoutManager(this)
-                    binding.details.adapter =
-                            toAdapter(
-                                    list,
-                                    onClickDetail = { detailVo, detailAction ->
-                                        when (detailAction) {
-                                            DetailAction.EDIT -> {
-                                                CreateDetailActivity.startAsEditMode(this, detailVo.toTransferObject())
-                                            }
-                                            DetailAction.COPY -> {
-                                                CreateDetailActivity.startAsCreateMode(this, detailVo.toTransferObject())
-                                            }
-                                            DetailAction.DELETE -> {
-                                                //
-                                            }
-                                        }
+                    binding.details.adapter = toAdapter(
+                            list,
+                            onClickDetail = { detailVo, detailAction ->
+                                when (detailAction) {
+                                    DetailAction.EDIT -> {
+                                        CreateDetailActivity.startAsEditMode(this, detailVo.toTransferObject())
                                     }
-                            )
+                                    DetailAction.COPY -> {
+                                        CreateDetailActivity.startAsCreateMode(this, detailVo.toTransferObject())
+                                    }
+                                    DetailAction.DELETE -> {
+                                        AlertDialog.Builder(this)
+                                                .setMessage(R.string.delete_tips)
+                                                .setPositiveButton(R.string.ok) { dialog, _ ->
+                                                    DetailService.delete(detailVo)
+                                                            .subscribe {
+                                                                dialog.dismiss()
+                                                                loadData()
+                                                            }
+                                                }
+                                                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                                                .show()
+                                    }
+                                }
+                            }
+                    )
                 }
         if (EnvManager.online()) {
             checkOfflineData()
@@ -139,8 +148,7 @@ class MainActivity : AppCompatActivity() {
             itemDetailBinding.detailCard.setCardBackgroundColor(v.context.getColor(colors.random()))
             itemDetailBinding.optCopy.setOnClickListener { onClickDetail(detailVo, DetailAction.COPY) }
             itemDetailBinding.optEdit.setOnClickListener { onClickDetail(detailVo, DetailAction.EDIT) }
-//            itemDetailBinding.optDelete.setOnClickListener { onClickDetail(detailVo, DetailAction.DELETE) }
-            itemDetailBinding.optDelete.visibility = View.GONE
+            itemDetailBinding.optDelete.setOnClickListener { onClickDetail(detailVo, DetailAction.DELETE) }
             itemDetailBinding.subject.text = "#${detailVo.subjectName}"
             itemDetailBinding.user.text = "@${detailVo.username}"
             detailVo.remark?.let {

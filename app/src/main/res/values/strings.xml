@@ -48,6 +48,7 @@
     <string name="detail_remark">什么都没写哦</string>
     <string name="titleCreate">新建明细</string>
     <string name="titleEdit">编辑明细</string>
+    <string name="delete_tips">删除后不可恢复，是否删除</string>
 
 
 </resources>
