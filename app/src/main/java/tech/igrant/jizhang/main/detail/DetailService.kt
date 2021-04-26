@@ -48,6 +48,16 @@ interface DetailService {
         val destAccountId: Long?
     ) {
         companion object {
+            fun withStartAndEnd(start: Date, end: Date): DetailQuery {
+                return DetailQuery(
+                    subjectIds = arrayListOf(),
+                    start = start,
+                    end = end,
+                    sourceAccountId = null,
+                    destAccountId = null
+                )
+            }
+
             fun first(): DetailQuery {
                 return DetailQuery(
                     subjectIds = arrayListOf(),
@@ -229,13 +239,16 @@ interface DetailService {
             }
         }
 
-        fun load(): Observable<List<DetailViewObject.Local>> {
+        fun load(
+            start: LocalDateTime,
+            end: LocalDateTime
+        ): Observable<List<DetailViewObject.Local>> {
             if (EnvManager.offline()) {
-                return loadFromLocal()
+                return loadFromLocal(start, end)
             }
             return RetrofitFacade.get().create(DetailService::class.java).list(
                 PageQuery(
-                    queryParam = DetailQuery.first(),
+                    queryParam = DetailQuery.withStartAndEnd(start.toDate(), end.toDate()),
                     page = 0,
                     size = 10
                 )
@@ -245,9 +258,23 @@ interface DetailService {
                 .map { it.content.map { d -> d.local() } }
         }
 
-        fun loadFromLocal(): Observable<List<DetailViewObject.Local>> {
+        fun loadAllFromLocal(): Observable<List<DetailViewObject.Local>> {
             return Observable.just(
                 LocalStorage.instance().batchGet(DB, DetailTransferObject.Local::class.java)
+                    .map { it.toViewObject() })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        }
+
+        private fun loadFromLocal(
+            start: LocalDateTime,
+            end: LocalDateTime
+        ): Observable<List<DetailViewObject.Local>> {
+            return Observable.just(
+                LocalStorage.instance().batchGet(DB, DetailTransferObject.Local::class.java)
+                    .filter {
+                        start.toDate().before(it.createdAt) && it.createdAt.before(end.toDate())
+                    }
                     .map { it.toViewObject() })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

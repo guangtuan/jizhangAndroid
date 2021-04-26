@@ -26,8 +26,8 @@
     <string name="title_amount">金额</string>
     <string name="title_date">日期</string>
     <string name="title_remark">备注</string>
-    <string name="offline_mode_tips">当前处于离线模式</string>
-    <string name="online_mode_tips">当前处于在线模式</string>
+    <string name="offline_mode_tips">离线模式</string>
+    <string name="online_mode_tips">在线模式</string>
 
     <string name="online">在线模式</string>
     <string name="offline">离线模式</string>
@@ -42,6 +42,8 @@
     <string name="button_copy">复制</string>
     <string name="button_edit">编辑</string>
     <string name="button_delete">删除</string>
+    <string name="button_create">记一笔</string>
+
 
     <string name="tools_account">@微信余额</string>
     <string name="tools_user">@alice</string>
@@ -49,6 +51,13 @@
     <string name="titleCreate">新建明细</string>
     <string name="titleEdit">编辑明细</string>
     <string name="delete_tips">删除后不可恢复，是否删除</string>
+    <string name="mon">一</string>
+    <string name="tue">二</string>
+    <string name="wed">三</string>
+    <string name="thur">四</string>
+    <string name="fri">五</string>
+    <string name="sat">六</string>
+    <string name="sun">七</string>
 
 
 </resources>

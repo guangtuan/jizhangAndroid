@@ -14,4 +14,16 @@
         <item name="android:layout_margin">8dp</item>
     </style>
 
+    <style name="WeekDay">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
 </resources>
