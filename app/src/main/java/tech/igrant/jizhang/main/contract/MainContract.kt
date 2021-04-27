@@ -95,7 +95,15 @@ interface MainContract {
             }
 
             override fun onClick(index: Int) {
+                if (model.getWeekIndex() == index + 1) {
+                    return
+                }
                 model.changeWeekIndex(index + 1)
+                view.renderTitle(
+                    dateStr = model.dateStr(),
+                    offline = model.offline()
+                )
+                loadData()
             }
         }
 
