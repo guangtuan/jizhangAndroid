@@ -1,5 +1,6 @@
 package tech.igrant.jizhang.main.contract
 
+import tech.igrant.jizhang.R
 import tech.igrant.jizhang.main.detail.DetailService
 import tech.igrant.jizhang.state.EnvManager
 import java.time.LocalDateTime
@@ -11,43 +12,45 @@ interface MainContract {
         fun renderTitle(dateStr: String, offline: Boolean)
         fun renderList(list: List<DetailService.DetailViewObject.Local>)
         fun renderOfflineData(list: List<DetailService.DetailViewObject.Local>)
-        fun renderWeekButton(weekIndex: Int)
-        fun renderWeekButtons(dateSelectable: List<Boolean>)
+        fun highLight(weekIndex: Int)
+        fun renderWeekButtons(tvs: List<Int>)
     }
 
     interface Model {
         fun dateStr(): String
         fun offline(): Boolean
         fun dateSelected(): LocalDateTime
-        fun changeWeekIndex(index: Int)
-        fun getWeekIndex(): Int
-        fun daySelectable(): List<Boolean>
+        fun setIndex(index: Int)
+        fun getIndex(): Int
+        fun dates(): List<LocalDateTime>
+        fun weekDateStrResource(): List<Int>
 
-        class Impl(private val today: LocalDateTime) : Model {
-            // weekIndex 1 -> 7 其他的 index 0 -> 6
-            private var weekIndex: Int
+        class Impl(today: LocalDateTime) : Model {
+            private var index = 3
+            private var dates: List<LocalDateTime> = listOf(
+                today.minusDays(3),
+                today.minusDays(2),
+                today.minusDays(1),
+                today,
+                today.plusDays(1),
+                today.plusDays(2),
+                today.plusDays(3),
+            )
 
-            init {
-                weekIndex = today.dayOfWeek.value
+            override fun dates(): List<LocalDateTime> {
+                return dates
             }
 
-            override fun daySelectable(): List<Boolean> {
-                return IntArray(7).mapIndexed { index: Int, _: Int -> index + 1 <= today.dayOfWeek.value }
+            override fun getIndex(): Int {
+                return index
             }
 
-            override fun getWeekIndex(): Int {
-                return weekIndex
-            }
-
-            override fun changeWeekIndex(index: Int) {
-                weekIndex = index
+            override fun setIndex(index: Int) {
+                this.index = index
             }
 
             override fun dateSelected(): LocalDateTime {
-                if (today.dayOfWeek.value == weekIndex) {
-                    return today
-                }
-                return today.minusDays((today.dayOfWeek.value - weekIndex).toLong())
+                return dates[index]
             }
 
             override fun dateStr(): String {
@@ -57,7 +60,22 @@ interface MainContract {
             override fun offline(): Boolean {
                 return EnvManager.offline()
             }
+
+            override fun weekDateStrResource(): List<Int> {
+                val lookup = mapOf(
+                    Pair(1, R.string.mon),
+                    Pair(2, R.string.tue),
+                    Pair(3, R.string.wed),
+                    Pair(4, R.string.thur),
+                    Pair(5, R.string.fri),
+                    Pair(6, R.string.sat),
+                    Pair(7, R.string.sun),
+                )
+                return dates.map { it.dayOfWeek.value }
+                    .mapNotNull { dayOfWeek -> lookup[dayOfWeek] }
+            }
         }
+
     }
 
     interface Presenter {
@@ -71,7 +89,7 @@ interface MainContract {
                     dateStr = model.dateStr(),
                     offline = model.offline()
                 )
-                view.renderWeekButtons(model.daySelectable())
+                view.renderWeekButtons(model.weekDateStrResource())
             }
 
             override fun loadData() {
@@ -83,7 +101,7 @@ interface MainContract {
                     )
                     .subscribe { list ->
                         view.renderList(list)
-                        view.renderWeekButton(model.getWeekIndex())
+                        view.highLight(model.getIndex())
                     }
                 if (!model.offline()) {
                     DetailService.loadAllFromLocal()
@@ -95,10 +113,10 @@ interface MainContract {
             }
 
             override fun onClick(index: Int) {
-                if (model.getWeekIndex() == index + 1) {
+                if (model.getIndex() == index) {
                     return
                 }
-                model.changeWeekIndex(index + 1)
+                model.setIndex(index)
                 view.renderTitle(
                     dateStr = model.dateStr(),
                     offline = model.offline()

@@ -10,81 +10,35 @@ class MainContractTest {
 
     @Test
     fun testModel() {
-        monday_case()
-        wednesday_case()
-        sunday_case()
-    }
-
-    private fun wednesday_case() {
         val model = MainContract.Model.Impl(
             LocalDate.parse(
-                "2021-04-21",
+                "2021-05-05",
                 DateTimeFormatter.ofPattern("yyyy-MM-dd")
             ).atStartOfDay()
         )
-        model.daySelectable().forEachIndexed { index, b ->
-            when (index) {
-                0 -> {
-                    Assert.assertTrue(b)
-                }
-                1 -> {
-                    Assert.assertTrue(b)
-                }
-                2 -> {
-                    Assert.assertTrue(b)
-                }
-                else -> {
-                    Assert.assertFalse(b)
-                }
-            }
-        }
-    }
-
-    private fun monday_case() {
-        val model = MainContract.Model.Impl(
-            LocalDate.parse(
-                "2021-04-19",
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            ).atStartOfDay()
+        val dates = model.dates()
+        val datesExpected = arrayListOf(
+            "2021-05-02",
+            "2021-05-03",
+            "2021-05-04",
+            "2021-05-05",
+            "2021-05-06",
+            "2021-05-07",
+            "2021-05-08",
         )
-        model.daySelectable().forEachIndexed { index, b ->
-            if (index == 0) {
-                Assert.assertTrue(b)
-            } else {
-                Assert.assertFalse(b)
-            }
+        dates.forEachIndexed { index, localDateTime ->
+            Assert.assertEquals(
+                datesExpected[index],
+                localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
         }
-        Assert.assertEquals("2021-04-19", model.dateStr())
-
-        // set to Monday
-        model.changeWeekIndex(7)
-        Assert.assertEquals("2021-04-25", model.dateStr())
-    }
-
-    private fun sunday_case() {
-        val model = MainContract.Model.Impl(
-            LocalDate.parse(
-                "2021-04-25",
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            ).atStartOfDay()
-        )
-
-        model.daySelectable().forEachIndexed { _, b ->
-            Assert.assertTrue(b)
+        for (i in 0..6) {
+            model.setIndex(i)
+            Assert.assertEquals(
+                datesExpected[i],
+                model.dateStr()
+            )
         }
-
-        Assert.assertSame(7, model.getWeekIndex())
-        Assert.assertEquals("2021-04-25", model.dateStr())
-
-        // set to Monday
-        model.changeWeekIndex(1)
-        Assert.assertSame(1, model.getWeekIndex())
-        Assert.assertEquals("2021-04-19", model.dateStr())
-
-        // set to Tuesday
-        model.changeWeekIndex(2)
-        Assert.assertSame(2, model.getWeekIndex())
-        Assert.assertEquals("2021-04-20", model.dateStr())
     }
 
 }

@@ -242,8 +242,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         )
     }
 
-    override fun renderWeekButton(weekIndex: Int) {
-        listOf(
+    override fun highLight(weekIndex: Int) {
+        val tvs = listOf(
             binding.mon,
             binding.tue,
             binding.wed,
@@ -251,16 +251,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             binding.fri,
             binding.sat,
             binding.sun
-        ).forEachIndexed { index, textView ->
-            if (weekIndex == index + 1) {
-                textView.setBackgroundColor(getColor(R.color.bg_1))
-            } else {
-                textView.setBackgroundColor(getColor(android.R.color.white))
-            }
+        )
+        tvs.forEach { textView ->
+            textView.setBackgroundColor(getColor(android.R.color.white))
         }
+        tvs[weekIndex].setBackgroundColor(getColor(R.color.bg_1))
     }
 
-    override fun renderWeekButtons(dateSelectable: List<Boolean>) {
+    override fun renderWeekButtons(tvs: List<Int>) {
         listOf(
             binding.mon,
             binding.tue,
@@ -270,10 +268,9 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             binding.sat,
             binding.sun
         ).forEachIndexed { index, textView ->
-            if (dateSelectable[index]) {
-                textView.setOnClickListener {
-                    presenter.onClick(index)
-                }
+            textView.text = getString(tvs[index])
+            textView.setOnClickListener {
+                presenter.onClick(index)
             }
         }
     }
