@@ -21,8 +21,8 @@ import tech.igrant.jizhang.main.contract.MainContract
 import tech.igrant.jizhang.main.detail.CreateDetailActivity
 import tech.igrant.jizhang.main.detail.DetailAction
 import tech.igrant.jizhang.main.detail.DetailService
+import tech.igrant.jizhang.main.subject.SubjectService
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
@@ -35,9 +35,12 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     private lateinit var binding: ActivityMainBinding
     private lateinit var presenter: MainContract.Presenter
     private lateinit var model: MainContract.Model
+    private lateinit var subjectIdToNameLookup: Map<Long, String>
+    private lateinit var childToParent: Map<Long, Long>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initLookup()
         binding = ActivityMainBinding.inflate(layoutInflater)
         model = MainContract.Model.Impl(LocalDateTime.now())
         presenter = MainContract.Presenter.Impl(this, model)
@@ -49,19 +52,39 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         presenter.loadData()
     }
 
+    private fun initLookup() {
+        val subjects = SubjectService.loadSubjectSync()
+        subjectIdToNameLookup = subjects.fold(
+            mutableMapOf(),
+            { acc, subject ->
+                acc[subject.id] = subject.name
+                acc
+            }
+        )
+        childToParent = subjects.fold(
+            mutableMapOf(),
+            { acc, subject ->
+                subject.parentId?.let {
+                    acc[subject.id] = it
+                }
+                acc
+            }
+        )
+    }
+
     private fun toAdapter(
         list: List<DetailService.DetailViewObject.Local>,
         onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
     ): DetailAdapter {
         val renderLines: ArrayList<RenderLine> = ArrayList()
         val grouped = list.groupBy { detail ->
-            detail.createdAt.format(
-                DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            )
+            childToParent[detail.subjectId]
         }
-        for (entry in grouped) {
-//            renderLines.add(RenderLine(entry.key, RenderLine.BANNER))
-            for (detailVo in entry.value) {
+        for ((pid, details) in grouped) {
+            subjectIdToNameLookup[pid]?.let {
+                renderLines.add(RenderLine(it, RenderLine.BANNER))
+            }
+            for (detailVo in details) {
                 renderLines.add(RenderLine(detailVo, RenderLine.CONTENT))
             }
         }

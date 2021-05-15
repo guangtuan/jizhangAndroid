@@ -56,6 +56,16 @@ interface SubjectService {
             return null
         }
 
+        fun loadSubjectSync(): List<SubjectVo> {
+            return if (memoryCache.isNotEmpty()) {
+                memoryCache.flatMap {
+                    mutableListOf(it).apply {
+                        this.addAll(it.children)
+                    }
+                }
+            } else emptyList()
+        }
+
         fun loadSubject(): Observable<List<SubjectVo>> {
             if (EnvManager.offline()) {
                 return Observable.just(LocalStorage.instance().batchGet(DB, SubjectVo::class.java))

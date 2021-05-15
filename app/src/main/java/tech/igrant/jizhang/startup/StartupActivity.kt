@@ -7,6 +7,7 @@ import tech.igrant.jizhang.databinding.ActivityStartupBinding
 import tech.igrant.jizhang.framework.RetrofitFacade
 import tech.igrant.jizhang.login.LoginActivity
 import tech.igrant.jizhang.login.TokenManager
+import tech.igrant.jizhang.main.InitService.Companion.init
 import tech.igrant.jizhang.main.MainActivity
 import tech.igrant.jizhang.state.EnvManager
 
@@ -24,8 +25,12 @@ class StartupActivity : AppCompatActivity() {
                 binding.setToOnline.visibility = View.VISIBLE
                 binding.setToOnline.setOnClickListener {
                     EnvManager.init(EnvManager.State.ONLINE)
-                    MainActivity.start(this)
-                    finish()
+                    init().subscribe {
+                        runOnUiThread {
+                            MainActivity.start(this)
+                            finish()
+                        }
+                    }
                 }
                 binding.setToOffline.visibility = View.VISIBLE
                 binding.setToOffline.setOnClickListener {
