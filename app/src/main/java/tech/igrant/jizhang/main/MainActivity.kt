@@ -39,14 +39,14 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        model = MainContract.Model.Impl(LocalDateTime.now())
+        presenter = MainContract.Presenter.Impl(this, model)
         binding.titleBar.rightTextView.setOnClickListener {
             presenter.navigateToCreate(this)
         }
-        model = MainContract.Model.Impl(LocalDateTime.now())
-        presenter = MainContract.Presenter.Impl(this, model)
+        setContentView(binding.root)
         presenter.startup()
         presenter.loadData()
-        setContentView(binding.root)
     }
 
     private fun toAdapter(
