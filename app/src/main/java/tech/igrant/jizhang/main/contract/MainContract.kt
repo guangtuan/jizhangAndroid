@@ -1,6 +1,9 @@
 package tech.igrant.jizhang.main.contract
 
+import android.app.Activity
 import tech.igrant.jizhang.R
+import tech.igrant.jizhang.framework.ext.toDate
+import tech.igrant.jizhang.main.detail.CreateDetailActivity
 import tech.igrant.jizhang.main.detail.DetailService
 import tech.igrant.jizhang.state.EnvManager
 import java.time.LocalDateTime
@@ -82,6 +85,7 @@ interface MainContract {
         fun startup()
         fun loadData()
         fun onClick(index: Int)
+        fun navigateToCreate(activity: Activity)
 
         class Impl(private val view: View, private val model: Model) : Presenter {
             override fun startup() {
@@ -123,6 +127,11 @@ interface MainContract {
                 )
                 loadData()
             }
+
+            override fun navigateToCreate(activity: Activity) {
+                CreateDetailActivity.startAsCreateMode(activity, model.dateSelected().toDate().time)
+            }
+
         }
 
     }

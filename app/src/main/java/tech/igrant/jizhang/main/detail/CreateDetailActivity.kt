@@ -19,6 +19,7 @@ import tech.igrant.jizhang.main.account.AccountService
 import tech.igrant.jizhang.main.subject.SubjectService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CreateDetailActivity : AppCompatActivity() {
 
@@ -28,6 +29,7 @@ class CreateDetailActivity : AppCompatActivity() {
 
         const val KEY_EDITING = "editing"
         const val KEY_MODE = "keyMode"
+        const val KEY_DATE = "keyDate"
 
         const val COMMON_REQUEST_CODE = 1
 
@@ -37,6 +39,16 @@ class CreateDetailActivity : AppCompatActivity() {
                 activity.startActivityForResult(
                         it,
                         COMMON_REQUEST_CODE
+                )
+            }
+        }
+
+        fun startAsCreateMode(activity: Activity, date: Long) {
+            Intent(activity, CreateDetailActivity::class.java).also {
+                it.putExtra(KEY_DATE, date)
+                activity.startActivityForResult(
+                    it,
+                    COMMON_REQUEST_CODE
                 )
             }
         }
@@ -62,6 +74,7 @@ class CreateDetailActivity : AppCompatActivity() {
                 )
             }
         }
+
     }
 
     private lateinit var binding: ActivityCreateBinding
@@ -84,6 +97,9 @@ class CreateDetailActivity : AppCompatActivity() {
             }
             intent.extras?.getString(KEY_EDITING)?.let { detailToStr ->
                 detail = Serialization.fromJson(detailToStr, DetailService.DetailTransferObject.Local::class.java)
+            }
+            intent.extras?.getLong(KEY_DATE)?.let {
+                detail.createdAt = Date(it)
             }
         }
         when (mode) {

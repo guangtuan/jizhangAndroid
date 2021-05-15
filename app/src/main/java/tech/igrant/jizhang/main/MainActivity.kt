@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.titleBar.rightTextView.setOnClickListener {
-            CreateDetailActivity.startAsCreateMode(this)
+            presenter.navigateToCreate(this)
         }
         model = MainContract.Model.Impl(LocalDateTime.now())
         presenter = MainContract.Presenter.Impl(this, model)
