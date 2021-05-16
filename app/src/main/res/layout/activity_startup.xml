@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -24,12 +24,12 @@
         app:titleBarColor="@android:color/white" />
 
     <LinearLayout
+        android:id="@+id/channels"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:orientation="vertical"
-        android:padding="32dp"
-        tools:context=".startup.StartupActivity">
+        android:padding="32dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/set_to_online"
@@ -81,4 +81,12 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+</FrameLayout>

@@ -16,6 +16,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:leftTextColor="@color/text_remark"
         app:leftType="textView"
+        app:rightText="@string/save"
+        app:rightTextColor="@color/text_remark"
+        app:rightType="textView"
         app:statusBarColor="@android:color/white"
         app:titleBarColor="@android:color/white" />
 
@@ -144,16 +147,5 @@
             android:inputType="textMultiLine" />
 
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/create_detail_save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/ok"
-        app:backgroundTint="@color/primary_dark"
-        app:srcCompat="@android:drawable/ic_menu_save" />
 
 </RelativeLayout>
