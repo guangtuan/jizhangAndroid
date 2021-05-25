@@ -164,6 +164,12 @@ class CreateDetailActivity : AppCompatActivity() {
                             detail.sourceAccountId = idName.id
                         }
                     )
+//                    val subjectMap = SubjectService.subjectMap()
+//                    val selectOptions = SelectOptions(ArrayList(subjectMap.keys), subjectMap)
+//                    SubjectSelector.create(
+//                        this,
+//                        selectOptions
+//                    )
                 }
                 detail.destAccountId?.let {
                     binding.createDetailDestAccountInput.text =

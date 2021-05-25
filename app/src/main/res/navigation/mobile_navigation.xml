@@ -12,12 +12,6 @@
         tools:layout="@layout/fragment_detail" />
 
     <fragment
-        android:id="@+id/navigation_subjects"
-        android:name="tech.igrant.jizhang.main.subject.SubjectFragment"
-        android:label="@string/title_subjects"
-        tools:layout="@layout/fragment_subject" />
-
-    <fragment
         android:id="@+id/navigation_settings"
         android:name="tech.igrant.jizhang.main.settings.SettingsFragment"
         android:label="@string/title_settings"

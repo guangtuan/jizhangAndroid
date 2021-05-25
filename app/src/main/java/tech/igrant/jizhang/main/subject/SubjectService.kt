@@ -66,6 +66,13 @@ interface SubjectService {
             } else emptyList()
         }
 
+        fun subjectMap(): Map<String, List<String>> {
+            return loadSubjectSync()
+                .filter { subjectVo -> subjectVo.parent != null }
+                .filter { subjectVo -> subjectVo.level == LEVEL_SMALL }
+                .groupBy({ subjectVo -> subjectVo.parent!! }, { subjectVo -> subjectVo.name })
+        }
+
         fun loadSubject(): Observable<List<SubjectVo>> {
             if (EnvManager.offline()) {
                 return Observable.just(LocalStorage.instance().batchGet(DB, SubjectVo::class.java))
