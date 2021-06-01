@@ -8,7 +8,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import tech.igrant.jizhang.R
+import tech.igrant.jizhang.comp.SelectOptions
 import tech.igrant.jizhang.databinding.ActivityCreateBinding
+import tech.igrant.jizhang.framework.IdName
 import tech.igrant.jizhang.framework.Serialization
 import tech.igrant.jizhang.framework.ext.format
 import tech.igrant.jizhang.framework.ext.toDate
@@ -16,6 +18,7 @@ import tech.igrant.jizhang.framework.ext.toLocalDateTime
 import tech.igrant.jizhang.framework.ext.uuid
 import tech.igrant.jizhang.login.TokenManager
 import tech.igrant.jizhang.main.account.AccountService
+import tech.igrant.jizhang.main.subject.SubjectSelector
 import tech.igrant.jizhang.main.subject.SubjectService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -123,7 +126,7 @@ class CreateDetailActivity : AppCompatActivity() {
             .map {
                 it.map { sub ->
                     sub.children.map { child ->
-                        SelectorDialog.IdName(
+                        IdName(
                             child.id,
                             child.name
                         )
@@ -148,7 +151,7 @@ class CreateDetailActivity : AppCompatActivity() {
             }
         AccountService.loadAccount()
             .map {
-                it.map { acc -> SelectorDialog.IdName(acc.id, acc.name) }
+                it.map { acc -> IdName(acc.id, acc.name) }
             }
             .subscribe { idNames ->
                 detail.sourceAccountId?.let {
@@ -156,20 +159,24 @@ class CreateDetailActivity : AppCompatActivity() {
                         idNames.find { idName -> idName.id == it }?.name
                 }
                 binding.createDetailSourceAccountInput.setOnClickListener {
-                    SelectorDialog.show(
-                        activity = this,
-                        idNames = idNames,
-                        onItemSelect = { idName ->
+//                    SelectorDialog.show(
+//                        activity = this,
+//                        idNames = idNames,
+//                        onItemSelect = { idName ->
+//                            binding.createDetailSourceAccountInput.text = idName.name
+//                            detail.sourceAccountId = idName.id
+//                        }
+//                    )
+                    val subjectMap = SubjectService.subjectMap()
+                    val selectOptions = SelectOptions(ArrayList(subjectMap.keys), subjectMap)
+                    SubjectSelector.create(
+                        this,
+                        selectOptions,
+                        onClickItem = { idName ->
                             binding.createDetailSourceAccountInput.text = idName.name
                             detail.sourceAccountId = idName.id
                         }
                     )
-//                    val subjectMap = SubjectService.subjectMap()
-//                    val selectOptions = SelectOptions(ArrayList(subjectMap.keys), subjectMap)
-//                    SubjectSelector.create(
-//                        this,
-//                        selectOptions
-//                    )
                 }
                 detail.destAccountId?.let {
                     binding.createDetailDestAccountInput.text =

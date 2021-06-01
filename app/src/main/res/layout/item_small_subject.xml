@@ -4,9 +4,9 @@
     android:id="@+id/subject_name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@drawable/bg_item"
     android:padding="8dp"
     android:textAlignment="center"
     android:textColor="@color/secondary_text"
-    android:textSize="14sp"
+    android:textSize="18sp"
     tools:text="吃饭" />

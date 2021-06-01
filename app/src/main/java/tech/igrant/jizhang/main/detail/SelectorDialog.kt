@@ -9,10 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import tech.igrant.jizhang.R
 import tech.igrant.jizhang.databinding.IdNameSelectListBinding
 import tech.igrant.jizhang.databinding.ItemSelectBinding
+import tech.igrant.jizhang.framework.IdName
 
 class SelectorDialog {
-
-    data class IdName(val id: Long, val name: String)
 
     class IdNameViewHolder(private val binding: ItemSelectBinding) :
         RecyclerView.ViewHolder(binding.root) {

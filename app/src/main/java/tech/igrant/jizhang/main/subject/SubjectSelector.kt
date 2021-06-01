@@ -15,19 +15,39 @@ import tech.igrant.jizhang.comp.SelectOptions
 import tech.igrant.jizhang.databinding.ItemBigSubjectBinding
 import tech.igrant.jizhang.databinding.ItemSmallSubjectBinding
 import tech.igrant.jizhang.databinding.SubjectSelectorBinding
+import tech.igrant.jizhang.framework.IdName
 
 
 class SubjectSelector {
 
     companion object {
-        fun create(ctx: Context, map: SelectOptions) {
+        fun create(ctx: Context, map: SelectOptions, onClickItem: (idName: IdName) -> Unit) {
+            val alertDialog = FullScreenDialog(ctx)
             val binding = SubjectSelectorBinding.inflate(LayoutInflater.from(ctx))
-            binding.bigCat.adapter = LeftAdapter(map.keys)
+
+            val rightAdapter = RightAdapter(
+                data = map.first(),
+                onClickItem = { idName ->
+                    alertDialog.dismiss()
+                    onClickItem(idName)
+                }
+            )
+            binding.smallCat.adapter = rightAdapter
+            binding.smallCat.layoutManager = LinearLayoutManager(ctx)
+            binding.smallCat.addItemDecoration(BigCatDe(ctx))
+
+            binding.bigCat.adapter = LeftAdapter(
+                data = map.keys,
+                onClickItem = { item ->
+                    rightAdapter.data = map.get(item)
+                    rightAdapter.notifyDataSetChanged()
+                }
+            )
             binding.bigCat.layoutManager = LinearLayoutManager(ctx)
             binding.bigCat.addItemDecoration(BigCatDe(ctx))
-            binding.smallCat.adapter = RightAdapter(map.first())
-            binding.smallCat.layoutManager = LinearLayoutManager(ctx)
-            val alertDialog = FullScreenDialog(ctx)
+
+            binding.cancelButton.setOnClickListener { alertDialog.dismiss() }
+
             alertDialog.setContentView(binding.root)
             alertDialog.show()
         }
@@ -72,22 +92,23 @@ class SubjectSelector {
 
     class LeftViewHolder(v: View, private val binding: ItemBigSubjectBinding) :
         RecyclerView.ViewHolder(v) {
-        fun bind(s: String) {
-            binding.subjectName.text = s
-            binding.subjectName.setOnClickListener { v -> v }
+        fun bind(bean: IdName, onClickItem: (idName: IdName) -> Unit) {
+            binding.subjectName.text = bean.name
+            binding.subjectName.setOnClickListener { onClickItem(bean) }
         }
     }
 
     class RightViewHolder(v: View, private val binding: ItemSmallSubjectBinding) :
         RecyclerView.ViewHolder(v) {
-        fun bind(s: String) {
-            binding.subjectName.text = s
-            binding.subjectName.setOnClickListener { v -> v }
+        fun bind(bean: IdName, onClickItem: (idName: IdName) -> Unit) {
+            binding.subjectName.text = bean.name
+            binding.subjectName.setOnClickListener { onClickItem(bean) }
         }
     }
 
     class LeftAdapter(
-        private val data: List<String>
+        private val data: List<IdName>,
+        private val onClickItem: (idName: IdName) -> Unit
     ) : RecyclerView.Adapter<LeftViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LeftViewHolder {
@@ -97,7 +118,7 @@ class SubjectSelector {
         }
 
         override fun onBindViewHolder(holder: LeftViewHolder, position: Int) {
-            holder.bind(data[position])
+            holder.bind(data[position], onClickItem)
         }
 
         override fun getItemCount(): Int = data.size
@@ -105,7 +126,8 @@ class SubjectSelector {
     }
 
     class RightAdapter(
-        private val data: List<String>
+        var data: List<IdName>,
+        private val onClickItem: (idName: IdName) -> Unit
     ) : RecyclerView.Adapter<RightViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RightViewHolder {
@@ -115,7 +137,7 @@ class SubjectSelector {
         }
 
         override fun onBindViewHolder(holder: RightViewHolder, position: Int) {
-            holder.bind(data[position])
+            holder.bind(data[position], onClickItem)
         }
 
         override fun getItemCount(): Int = data.size

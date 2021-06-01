@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.http.GET
+import tech.igrant.jizhang.framework.IdName
 import tech.igrant.jizhang.framework.LocalStorage
 import tech.igrant.jizhang.framework.RetrofitFacade
 import tech.igrant.jizhang.state.EnvManager
@@ -66,11 +67,17 @@ interface SubjectService {
             } else emptyList()
         }
 
-        fun subjectMap(): Map<String, List<String>> {
+        fun subjectMap(): Map<IdName, List<IdName>> {
             return loadSubjectSync()
                 .filter { subjectVo -> subjectVo.parent != null }
+                .filter { subjectVo -> subjectVo.parentId != null }
                 .filter { subjectVo -> subjectVo.level == LEVEL_SMALL }
-                .groupBy({ subjectVo -> subjectVo.parent!! }, { subjectVo -> subjectVo.name })
+                .groupBy({ subjectVo ->
+                    IdName(
+                        id = subjectVo.parentId!!,
+                        name = subjectVo.parent!!
+                    )
+                }, { subjectVo -> IdName(id = subjectVo.id, name = subjectVo.name) })
         }
 
         fun loadSubject(): Observable<List<SubjectVo>> {
