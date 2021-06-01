@@ -122,33 +122,24 @@ class CreateDetailActivity : AppCompatActivity() {
         detail.remark?.let {
             binding.createDetailRemarkInput.setText(it)
         }
-        SubjectService.loadSubject()
-            .map {
-                it.map { sub ->
-                    sub.children.map { child ->
-                        IdName(
-                            child.id,
-                            child.name
-                        )
+        SubjectService.subjectMap().let { subjectMap ->
+            if (detail.subjectId != -1L) {
+                binding.createDetailSubjectInput.text =
+                    subjectMap.values.flatMap { it.asIterable() }
+                        .find { it.id == detail.subjectId }?.name
+            }
+            binding.createDetailSubjectInput.setOnClickListener {
+                val selectOptions = SelectOptions(ArrayList(subjectMap.keys), subjectMap)
+                SubjectSelector.create(
+                    this,
+                    selectOptions,
+                    onClickItem = { idName ->
+                        binding.createDetailSubjectInput.text = idName.name
+                        detail.subjectId = idName.id
                     }
-                }.flatten()
+                )
             }
-            .subscribe { idNames ->
-                if (detail.subjectId != -1L) {
-                    binding.createDetailSubjectInput.text =
-                        idNames.find { it.id == detail.subjectId }?.name
-                }
-                binding.createDetailSubjectInput.setOnClickListener {
-                    SelectorDialog.show(
-                        activity = this,
-                        idNames = idNames,
-                        onItemSelect = { idName ->
-                            binding.createDetailSubjectInput.text = idName.name
-                            detail.subjectId = idName.id
-                        }
-                    )
-                }
-            }
+        }
         AccountService.loadAccount()
             .map {
                 it.map { acc -> IdName(acc.id, acc.name) }
@@ -159,20 +150,10 @@ class CreateDetailActivity : AppCompatActivity() {
                         idNames.find { idName -> idName.id == it }?.name
                 }
                 binding.createDetailSourceAccountInput.setOnClickListener {
-//                    SelectorDialog.show(
-//                        activity = this,
-//                        idNames = idNames,
-//                        onItemSelect = { idName ->
-//                            binding.createDetailSourceAccountInput.text = idName.name
-//                            detail.sourceAccountId = idName.id
-//                        }
-//                    )
-                    val subjectMap = SubjectService.subjectMap()
-                    val selectOptions = SelectOptions(ArrayList(subjectMap.keys), subjectMap)
-                    SubjectSelector.create(
-                        this,
-                        selectOptions,
-                        onClickItem = { idName ->
+                    SelectorDialog.show(
+                        activity = this,
+                        idNames = idNames,
+                        onItemSelect = { idName ->
                             binding.createDetailSourceAccountInput.text = idName.name
                             detail.sourceAccountId = idName.id
                         }
