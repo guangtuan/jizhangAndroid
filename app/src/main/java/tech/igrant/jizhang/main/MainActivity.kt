@@ -99,27 +99,34 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         }
     }
 
-    abstract class AbsDetailViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    abstract class AbsDetailViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
         abstract fun bind(
             renderLine: RenderLine,
+            renderLines: List<RenderLine>,
             onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
         )
 
-        companion object {
+        fun getColors(userId: Long): Int {
             val colors = listOf(R.color.bg_1, R.color.bg_2, R.color.bg_3)
+            return v.context.getColor(colors[userId.toInt() % 3])
         }
     }
 
-    class DetailViewHolder(val v: View, private val itemDetailBinding: ItemDetailBinding) :
+    class DetailViewHolder(private val v: View, private val itemDetailBinding: ItemDetailBinding) :
         AbsDetailViewHolder(v) {
 
         @SuppressLint("SetTextI18n")
         override fun bind(
             renderLine: RenderLine,
+            renderLines: List<RenderLine>,
             onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
         ) {
             val detailVo = renderLine.t as DetailService.DetailViewObject.Local
-            itemDetailBinding.detailCard.setCardBackgroundColor(v.context.getColor(colors.random()))
+            itemDetailBinding.detailCard.setCardBackgroundColor(
+                getColors(
+                    detailVo.userId
+                )
+            )
             itemDetailBinding.optCopy.setOnClickListener {
                 onClickDetail(
                     detailVo,
@@ -165,6 +172,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     ) : AbsDetailViewHolder(v) {
         override fun bind(
             renderLine: RenderLine,
+            renderLines: List<RenderLine>,
             onClickDetail: (detailVo: DetailService.DetailViewObject.Local, detailAction: DetailAction) -> Unit
         ) {
             val dateString = renderLine.t as String
@@ -195,7 +203,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         override fun getItemViewType(position: Int): Int = renderLine[position].type
 
         override fun onBindViewHolder(holder: AbsDetailViewHolder, position: Int) {
-            holder.bind(renderLine[position], onClickDetail)
+            holder.bind(renderLine[position], renderLine, onClickDetail)
         }
 
     }
