@@ -156,7 +156,7 @@ interface DetailService {
         ) {
             fun toViewObject(): DetailViewObject.Local {
                 val sourceAccountName = this.sourceAccountId?.let {
-                    AccountService.findAccountFromMemory(it)?.name
+                    AccountService.findAccountFromMemory(it)?.display()
                 }
                 val subjectName = SubjectService.findSubjectFromMemory(this.subjectId)?.name
                 Log.i("TAG", "get subjectName $subjectName")
@@ -168,7 +168,7 @@ interface DetailService {
                     destAccountId = this.destAccountId,
                     sourceAccountName = sourceAccountName,
                     destAccountName = this.destAccountId?.let {
-                        AccountService.findAccountFromMemory(it)?.name
+                        AccountService.findAccountFromMemory(it)?.display()
                     },
                     subjectId = this.subjectId,
                     subjectName = subjectName,

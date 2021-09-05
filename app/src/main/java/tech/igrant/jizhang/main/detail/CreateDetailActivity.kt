@@ -142,7 +142,7 @@ class CreateDetailActivity : AppCompatActivity() {
         }
         AccountService.loadAccount()
             .map {
-                it.map { acc -> IdName(acc.id, acc.name) }
+                it.map { acc -> IdName(acc.id, acc.display()) }
             }
             .subscribe { idNames ->
                 detail.sourceAccountId?.let {

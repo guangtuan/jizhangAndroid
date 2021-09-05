@@ -38,8 +38,15 @@ class StartupActivity : AppCompatActivity() {
                 binding.setToOffline.visibility = View.VISIBLE
                 binding.setToOffline.setOnClickListener {
                     EnvManager.init(EnvManager.State.OFFLINE)
-                    MainActivity.start(this)
-                    finish()
+                    binding.loading.visibility = View.VISIBLE
+                    binding.loading.show()
+                    InitService.init().subscribe {
+                        runOnUiThread {
+                            binding.loading.hide()
+                            MainActivity.start(this)
+                            finish()
+                        }
+                    }
                 }
             }
             ?: run { LoginActivity.start(this); finish(); }

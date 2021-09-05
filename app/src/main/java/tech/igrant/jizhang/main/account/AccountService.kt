@@ -24,8 +24,13 @@ interface AccountService {
         var updatedAt: Date,
         var description: String,
         var nickname: String,
-        var initAmount: Int
-    )
+        var initAmount: Int,
+        var tail: String?
+    ) {
+        fun display(): String {
+            return tail?.let { "$name($tail)" } ?: name;
+        }
+    }
 
     companion object {
 
