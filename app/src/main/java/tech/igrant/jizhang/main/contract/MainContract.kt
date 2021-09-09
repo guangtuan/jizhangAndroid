@@ -29,15 +29,15 @@ interface MainContract {
         fun weekDateStrResource(): List<Int>
 
         class Impl(today: LocalDateTime) : Model {
-            private var index = 3
+            private var index = 5
             private var dates: List<LocalDateTime> = listOf(
+                today.minusDays(5),
+                today.minusDays(4),
                 today.minusDays(3),
                 today.minusDays(2),
                 today.minusDays(1),
                 today,
                 today.plusDays(1),
-                today.plusDays(2),
-                today.plusDays(3),
             )
 
             override fun dates(): List<LocalDateTime> {

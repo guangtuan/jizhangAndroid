@@ -12,7 +12,7 @@ class MainContractTest {
     fun testModel() {
         val model = MainContract.Model.Impl(
             LocalDate.parse(
-                "2021-05-05",
+                "2021-05-07",
                 DateTimeFormatter.ofPattern("yyyy-MM-dd")
             ).atStartOfDay()
         )

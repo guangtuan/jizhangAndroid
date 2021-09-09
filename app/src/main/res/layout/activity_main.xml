@@ -34,37 +34,37 @@
         app:layout_constraintTop_toBottomOf="@id/title_bar">
 
         <TextView
-            android:id="@+id/mon"
+            android:id="@+id/d1"
             style="@style/WeekDay"
             android:text="@string/mon" />
 
         <TextView
-            android:id="@+id/tue"
+            android:id="@+id/d2"
             style="@style/WeekDay"
             android:text="@string/tue" />
 
         <TextView
-            android:id="@+id/wed"
+            android:id="@+id/d3"
             style="@style/WeekDay"
             android:text="@string/wed" />
 
         <TextView
-            android:id="@+id/thur"
+            android:id="@+id/d4"
             style="@style/WeekDay"
             android:text="@string/thur" />
 
         <TextView
-            android:id="@+id/fri"
+            android:id="@+id/d5"
             style="@style/WeekDay"
             android:text="@string/fri" />
 
         <TextView
-            android:id="@+id/sat"
+            android:id="@+id/d6"
             style="@style/WeekDay"
             android:text="@string/sat" />
 
         <TextView
-            android:id="@+id/sun"
+            android:id="@+id/d7"
             style="@style/WeekDay"
             android:text="@string/sun" />
 

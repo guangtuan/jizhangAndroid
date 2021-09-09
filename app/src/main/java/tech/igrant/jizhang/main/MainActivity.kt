@@ -275,13 +275,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun highLight(weekIndex: Int) {
         val tvs = listOf(
-            binding.mon,
-            binding.tue,
-            binding.wed,
-            binding.thur,
-            binding.fri,
-            binding.sat,
-            binding.sun
+            binding.d1,
+            binding.d2,
+            binding.d3,
+            binding.d4,
+            binding.d5,
+            binding.d6,
+            binding.d7
         )
         tvs.forEach { textView ->
             textView.setBackgroundColor(getColor(android.R.color.white))
@@ -291,13 +291,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     override fun renderWeekButtons(tvs: List<Int>) {
         listOf(
-            binding.mon,
-            binding.tue,
-            binding.wed,
-            binding.thur,
-            binding.fri,
-            binding.sat,
-            binding.sun
+            binding.d1,
+            binding.d2,
+            binding.d3,
+            binding.d4,
+            binding.d5,
+            binding.d6,
+            binding.d7
         ).forEachIndexed { index, textView ->
             textView.text = getString(tvs[index])
             textView.setOnClickListener {
