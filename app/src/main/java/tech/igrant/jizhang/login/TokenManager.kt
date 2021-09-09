@@ -24,6 +24,10 @@ class TokenManager {
             RetrofitFacade.init(appDataSource)
             LocalStorage.instance().put("token", "token", appDataSource)
         }
+
+        fun clear() {
+            LocalStorage.instance().delete("token", "token")
+        }
     }
 
 }

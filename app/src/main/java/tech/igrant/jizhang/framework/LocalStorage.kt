@@ -31,7 +31,7 @@ class LocalStorage private constructor() {
     fun <T> get(db: String, key: String, tClass: Class<T>): T? {
         return File(cacheDir, db).let {
             if (!it.exists()) {
-                return null;
+                return null
             }
             Serialization.fromJson(File(it, key).readText(), tClass)
         }
