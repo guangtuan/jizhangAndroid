@@ -5,15 +5,17 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.http.GET
+import retrofit2.http.Query
 import tech.igrant.jizhang.framework.LocalStorage
 import tech.igrant.jizhang.framework.RetrofitFacade
+import tech.igrant.jizhang.login.TokenManager
 import tech.igrant.jizhang.state.EnvManager
 import java.util.*
 
 interface AccountService {
 
-    @GET("/api/accounts")
-    fun list(): Observable<List<AccountVo>>
+    @GET("/api/accounts?by=user")
+    fun list(@Query("userId") userId: Long): Observable<List<AccountVo>>
 
     data class AccountVo(
         var id: Long,
@@ -63,16 +65,18 @@ interface AccountService {
                 Observable.just(memoryCache.toList()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
             }
-            return RetrofitFacade.get().create(AccountService::class.java)
-                .list()
-                .doOnNext {
-                    memoryCache.clear()
-                    memoryCache.addAll(it)
-                    LocalStorage.instance().batchClear(DB)
-                    LocalStorage.instance().batchSave(DB, { account -> "" + account.id }, it)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            return TokenManager.get()?.let { token ->
+                RetrofitFacade.get().create(AccountService::class.java)
+                    .list(token.userId)
+                    .doOnNext {
+                        memoryCache.clear()
+                        memoryCache.addAll(it)
+                        LocalStorage.instance().batchClear(DB)
+                        LocalStorage.instance().batchSave(DB, { account -> "" + account.id }, it)
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+            } ?: Observable.empty()
         }
     }
 
