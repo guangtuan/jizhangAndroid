@@ -14,6 +14,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import tech.igrant.jizhang.R
 import tech.igrant.jizhang.framework.RetrofitFacade
+import tech.igrant.jizhang.main.InitService
 import tech.igrant.jizhang.main.MainActivity
 import tech.igrant.jizhang.state.EnvManager
 
@@ -62,9 +63,11 @@ class LoginActivity : AppCompatActivity() {
                             )
                         )
                         EnvManager.init(EnvManager.State.ONLINE)
-                        runOnUiThread {
-                            MainActivity.start(this)
-                            finish()
+                        InitService.init().subscribe {
+                            runOnUiThread {
+                                MainActivity.start(this)
+                                finish()
+                            }
                         }
                     },
                     {
